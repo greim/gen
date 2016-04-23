@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Chapter VI: Delegation and recursion</title>
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
+<link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="assets/styles.css">
+</head>
+<body>
+<div id="wrapper">
+<h1 id="chapter-vi-delegation-and-recursion">Chapter VI: Delegation and recursion</h1>
+<ul>
+<li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
+<li><a href="./01-pull-push.html">Chapter I: Pull vs. push</a></li>
+<li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
+<li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
+<li><a href="./04-generators.html">Chapter IV: Generators</a></li>
+<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
+<li><strong>Chapter VI: Delegation and recursion</strong></li>
+<li><a href="./07-advanced-topics.html">Chapter VII: Advanced topics</a></li>
+</ul>
+<h2 id="revisiting-our-tree-traversal">Revisiting our tree traversal</h2>
+<p>In a previous chapter, we pimped out our binary search tree with generator-based iteration. Venturing a bit further down that rabbit hole, we note that we used <a href="https://en.wikipedia.org/wiki/Breadth-first_search">breadth-first iteration</a>, meaning that we visited every value at the child level before moving to the grandchild level, etc.</p>
+<pre><code class="lang-js">// a breadth-first tree traversal algorithm
+var queue = this.root ? [this.root] : [];
+while (queue.length &gt; 0) {
+  var node = queue.shift();
+  yield node.value;
+  if (node.left) { queue.push(node.left); }
+  if (node.right) { queue.push(node.right); }
+}
+</code></pre>
+<p>This technique works, but ignores the innate sorting properties of binary search trees. To fix this, we want to switch to <a href="https://en.wikipedia.org/wiki/Tree_traversal#In-order">in-order iteration</a>. The easiest way to do that is to use recursion, which means our generator will have to call itself.</p>
+<p>The way our tree works is that we have a <code>Tree</code> class and an inner <code>Node</code> class. Instances of <code>Tree</code> have a root which is undefined if the tree is empty. Otherwise, it&#39;s an instance of <code>Node</code>, which in turn can have left and right children, themselves instances of <code>Node</code>, and so on.</p>
+<pre><code>tree (Tree)
+└──root (Node)
+   ├──value: 5
+   ├──left (Node)
+   │  ├──value: 3
+   │  ├──left (Node)
+   │  │  ├──value: 2
+   │  │  ├──left (undefined)
+   │  │  └──right (undefined)
+   │  └──right (Node)
+   │     ├──value: 4
+   │     ├──left (undefined)
+   │     └──right (undefined)
+   └──right (Node)
+      ├──value: 7
+      ├──left (undefined)
+      └──right (undefined)
+</code></pre><h2 id="adding-recursion-to-a-generator-attempt-one">Adding recursion to a generator: attempt one</h2>
+<p>We&#39;ll make both <code>Tree</code> and <code>Node</code> iterable, and have <code>Tree</code> delegate to its root <code>Node</code>, if it exists. Then the root will recursively delegate to its left and right children, if they exist, etc.</p>
+<pre><code class="lang-js">class Tree {
+  // ...
+  *[Symbol.iterator]() {
+    if (this.root) {
+      for (const val of this.root) {
+        yield val;
+      }
+    }
+  }
+}
+
+class Node {
+  // ...
+  *[Symbol.iterator]() {
+    if (this.left) {
+      for (const val of this.left) {
+        yield val;
+      }
+    }
+    yield this.value;
+    if (this.right) {
+      for (const val of this.right) {
+        yield val;
+      }
+    }
+  }
+}
+</code></pre>
+<p>Since <code>[Symbol.iterator]</code> has a for/of loop which calls <code>[Symbol.iterator]</code> on its children, we have recursion. However, we&#39;ve written too much code! It turns out that generators have a much easier way to do delegation.</p>
+<h2 id="generator-delegation">Generator delegation</h2>
+<p>Generators have the ability to delegate to any iterable. Whenever we <code>yield* obj</code>, where <code>obj</code> is iterable, we inline that sequence into the sequence we&#39;re generating. Read <code>yield* foo</code> as <em>yield all the things in foo</em>. All sorts of arbitrarily-deeply nested delegation could be happening, but in the end, the consumer just sees a flat stream.</p>
+<pre><code class="lang-js">function* a() {
+  yield 1;
+  yield* arr;
+  yield 2;
+}
+
+var arr = [ 3, 4 ];
+
+for (let n of a()) {
+  console.log(n);
+}
+// =&gt; 1
+// =&gt; 3
+// =&gt; 4
+// =&gt; 2
+</code></pre>
+<p>Important point: generators can delegate to <em>any iterable</em>, not just ones created by generators!</p>
+<h2 id="adding-recursion-to-a-generator-attempt-two">Adding recursion to a generator: attempt two</h2>
+<p>Going back and applying this to our tree, we get this:</p>
+<pre><code class="lang-js">class Tree {
+  // ...
+  *[Symbol.iterator]() {
+    if (this.root) yield* this.root;
+  }
+}
+
+class Node {
+  // ...
+  *[Symbol.iterator]() {
+    if (this.left) yield* this.left;
+    yield this.value;
+    if (this.right) yield* this.right;
+  }
+}
+</code></pre>
+<p>Read as: <em>yield all the things on the left, then yield this thing, then yield all the things on the right</em>. And voila! We have an in-order iteration that visits every value in the tree.</p>
+<hr>
+<ul>
+<li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
+<li><a href="./01-pull-push.html">Chapter I: Pull vs. push</a></li>
+<li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
+<li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
+<li><a href="./04-generators.html">Chapter IV: Generators</a></li>
+<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
+<li><strong>Chapter VI: Delegation and recursion</strong></li>
+<li><a href="./07-advanced-topics.html">Chapter VII: Advanced topics</a></li>
+</ul>
+
+<hr>
+<p id="bottom-note">
+Copyright &copy; 2016 by Greg Reimer (<a href="https://github.com/greim">github.com/greim</a>).
+Submit issues to the <a href="http://todo.example.com/">GitHub issues</a> page.
+</p>
+</div>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

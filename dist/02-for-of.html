@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Chapter II: The for/of loop</title>
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
+<link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="assets/styles.css">
+</head>
+<body>
+<div id="wrapper">
+<h1 id="chapter-ii-the-for-of-loop">Chapter II: The for/of loop</h1>
+<ul>
+<li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
+<li><a href="./01-pull-push.html">Chapter I: Pull vs. push</a></li>
+<li><strong>Chapter II: The for/of loop</strong></li>
+<li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
+<li><a href="./04-generators.html">Chapter IV: Generators</a></li>
+<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
+<li><a href="./06-recursion.html">Chapter VI: Delegation and recursion</a></li>
+<li><a href="./07-advanced-topics.html">Chapter VII: Advanced topics</a></li>
+</ul>
+<h2 id="a-new-twist">A new twist</h2>
+<p>In the first chapter, we learned about tradeoffs between the <em>pull</em> and <em>push</em> models for consuming collections. However, ES6 introduces a new twist on the pull model that we didn&#39;t take into account before: the for/of loop.</p>
+<h2 id="yay-for-of-loops-">Yay for/of loops!</h2>
+<p>Compare these two ways of looping an array:</p>
+<pre><code class="lang-js">for (var i=0; i&lt;arr.length; i++) {
+  var value = arr[i];
+  visit(value);
+}
+
+for (var value of arr) {
+  visit(value);
+}
+</code></pre>
+<p>Unlike what we saw in the push model, for/of retains all the language-level powers of a loop:</p>
+<ul>
+<li>You can <code>return</code> the outer function from inside the loop body.</li>
+<li>You can <code>break</code> or <code>continue</code> iteration from inside the loop body.</li>
+<li>You can <code>yield</code> or <code>await</code> from inside the loop body.</li>
+</ul>
+<p>Also note the ways for/of differs from other loops:</p>
+<ul>
+<li>We don&#39;t have to track any state (e.g. an &quot;<code>i</code>&quot; variable).</li>
+<li>We don&#39;t need to worry about when to end the loop.</li>
+<li>We don&#39;t need to know any specifics about the data structure.</li>
+</ul>
+<p>In other words, for/of retains the benefits of the pull model, while also gaining benefits of the push model!</p>
+<h2 id="lots-of-things-are-for-of-able">Lots of things are for/of-able</h2>
+<p>Arrays are just one of many things in ES6 can be for/of&#39;d, including:</p>
+<ul>
+<li>Maps</li>
+<li>Sets</li>
+<li>Strings</li>
+<li>Function arguments objects</li>
+<li>DOM collections</li>
+</ul>
+<p>This raises the question: what makes something for/of-able? Are only built-in objects for/of-able, or could our binary search tree from the last chapter also be looped using for/of? That&#39;s where ES6 iterators come in, and it&#39;s the topic of the next chapter.</p>
+<hr>
+<ul>
+<li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
+<li><a href="./01-pull-push.html">Chapter I: Pull vs. push</a></li>
+<li><strong>Chapter II: The for/of loop</strong></li>
+<li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
+<li><a href="./04-generators.html">Chapter IV: Generators</a></li>
+<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
+<li><a href="./06-recursion.html">Chapter VI: Delegation and recursion</a></li>
+<li><a href="./07-advanced-topics.html">Chapter VII: Advanced topics</a></li>
+</ul>
+
+<hr>
+<p id="bottom-note">
+Copyright &copy; 2016 by Greg Reimer (<a href="https://github.com/greim">github.com/greim</a>).
+Submit issues to the <a href="http://todo.example.com/">GitHub issues</a> page.
+</p>
+</div>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

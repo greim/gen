@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Chapter VII: Advanced topics</title>
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
+<link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="assets/styles.css">
+</head>
+<body>
+<div id="wrapper">
+<h1 id="chapter-vii-advanced-topics">Chapter VII: Advanced topics</h1>
+<ul>
+<li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
+<li><a href="./01-pull-push.html">Chapter I: Pull vs. push</a></li>
+<li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
+<li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
+<li><a href="./04-generators.html">Chapter IV: Generators</a></li>
+<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
+<li><a href="./06-recursion.html">Chapter VI: Delegation and recursion</a></li>
+<li><strong>Chapter VII: Advanced topics</strong></li>
+</ul>
+<h2 id="it-s-dangerous-to-go-alone-">It&#39;s dangerous to go alone...</h2>
+<p>The goal of this tutorial was to introduce generators as the centerpiece of iteration in ES6. With that done, we&#39;ll briefly look at a few advanced use cases which start to go beyond iteration. This isn&#39;t meant to be an exhaustive tour of every cool thing generators can do, just a few items to take with you as you leave and explore the world of generators on your own.</p>
+<h2 id="functional-programming-over-sequences">Functional programming over sequences</h2>
+<p>Considering that iteration introduces a conceptual shift from <em>collections</em> to <em>abstract sequences</em>, collection-oriented libraries like lodash start to seem incomplete. Operations like map, filter, and reduce can just as easily operate on infinite or lazy sequences, for example. The <a href="https://fitzgen.github.io/wu.js/">wu library</a> offers these kinds of capabilities, and can be thought of as &quot;lodash for iterators&quot;:</p>
+<pre><code class="lang-js">const evenSquares = wu(range(0, Infinity))
+.map(n =&gt; n * n)
+.filter(n =&gt; n % 2 === 0);
+
+for (let n of evenSquares) {
+  console.log(n);
+}
+// =&gt; 0
+// =&gt; 4
+// =&gt; 16
+// =&gt; 36
+// =&gt; ...
+</code></pre>
+<h2 id="two-way-communication">Two-way communication</h2>
+<p>You might remember a curious code snippet from a previous chapter, in which <code>yield</code> is placed anywhere an expression is expected:</p>
+<pre><code class="lang-js">var myString = `Hello ${yield 4}`;
+</code></pre>
+<p>This raises the question: what are the contents of <code>myString</code>?</p>
+<p>So far we&#39;ve only looked at <em>consuming</em> information from generators. But here&#39;s yet another twist: if you have an iterator &quot;<code>itr</code>&quot; gotten from a generator, you can pass in an argument: <code>itr.next(someValue)</code>. Inside the generator, what this looks like is that a <code>yield</code> expression evaluates to <code>someValue</code>.</p>
+<p>This is significant, because now instead of a one-way consumer/producer relationship, we have a cooperative, &quot;ping-pong&quot; sort of relationship, with the generator sending things to its runner, and the runner sending things back to the generator.</p>
+<pre><code class="lang-js">// generator
+function* foo() {
+  console.log(`Hello ${yield 1}!`); // &#39;Hello world!&#39;
+}
+
+// runner
+var itr = foo();
+console.log(itr.next().value); // =&gt; 1
+itr.next(&#39;world&#39;);
+</code></pre>
+<p>Not only can information be sent into a generator via <code>next()</code>, but so can errors via <code>throw()</code>, which inside the generator you handle like any other error, treating a <code>yield</code> as something that might throw an exception.</p>
+<pre><code class="lang-js">function* foo() {
+  try { yield 1; }
+  catch(ex) { console.log(ex); } // &#39;oops&#39;
+}
+
+var itr = foo();
+console.log(itr.next().value); // 1
+itr.throw(&#39;oops&#39;);
+</code></pre>
+<p>Note that these capabilities aren&#39;t part of the iterator protocol. Rather, they&#39;re extra powers that generator-created iterators have. <a href="http://www.2ality.com/2015/03/es6-generators.html#return%28%29-and-throw%28%29">Read more about it here</a>.</p>
+<h2 id="async-generators">Async generators</h2>
+<p>This two-way communication between a generator and its runner opens up possibilities in async flow control. A generator can yield promises out to a special runner, which resolves it and then &quot;bounces&quot; the resolved value right back into the generator, asynchronously. What this looks like inside a generator is that a <code>yield promise</code> expression evaluates to the resolved value of that promise, or else throws an exception.</p>
+<pre><code class="lang-js">// in the generator
+var resp = yield fetch(&#39;/users/123&#39;);
+console.log(resp.status);
+</code></pre>
+<p>This &quot;trampoline&quot; technique gives us callback-free async flow control. All we need is a runner function, which we&#39;ll call <code>coroutine()</code> (think: &quot;cooperative subroutine&quot;) and a generator function to pass to it:</p>
+<pre><code class="lang-js">const getUsername = coroutine(function*(id) {
+  let resp = yield fetch(`/users/${id}`);
+  var obj = yield resp.json();
+  if (resp.status === 200) return obj.username;
+  else throw new Error(obj.errorMessage);
+});
+
+const getGreeting = coroutine(function*() {
+  const myId = localStorage.getItem(&#39;my_id&#39;);
+  if (!myId) throw new Error(&#39;not logged in&#39;);
+  else return `Hello, ${yield getUsername(myId)}`;
+});
+
+getGreeting().then(
+  greeting =&gt; alert(greeting),
+  error =&gt; alert(error.message)
+);
+</code></pre>
+<p>Observations:</p>
+<ul>
+<li><code>coroutine()</code> accepts a generator and returns a function, both of which have the same signature and <code>this</code> context.</li>
+<li><code>yield somePromise</code> expressions inside the generator either evaluate to a value or throw, depending on whether <code>somePromise</code> resolves or rejects.</li>
+<li>Calls to the returned function return a promise which resolves to the return value of the generator.</li>
+<li>Thrown exceptions inside the generator reject the returned promise.</li>
+</ul>
+<p>The upshot is that we retain the power of asynchronous programming, while gaining the power of imperative, synchronous-style programming. No more callback hell, or thenable heck!</p>
+<p>All of this of course depends on having a <code>coroutine()</code> function that does the right thing. Fortunately, there are multiple libraries to choose from here, including <a href="https://www.npmjs.com/package/co">co</a>, <a href="https://www.npmjs.com/package/bluebird">Bluebird.coroutine</a>, and <a href="https://github.com/kriskowal/q">Q.spawn</a>.</p>
+<p>Finally, it&#39;s worth noting that this approach is so powerful that it inspired the <a href="https://jakearchibald.com/2014/es7-async-functions/">async functions</a> proposal, which mirrors this technique, but at the language level, and without requiring a <code>coroutine()</code> function. As of early 2016, it&#39;s a stage 3 EcmaScript proposal.</p>
+<hr>
+<ul>
+<li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
+<li><a href="./01-pull-push.html">Chapter I: Pull vs. push</a></li>
+<li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
+<li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
+<li><a href="./04-generators.html">Chapter IV: Generators</a></li>
+<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
+<li><a href="./06-recursion.html">Chapter VI: Delegation and recursion</a></li>
+<li><strong>Chapter VII: Advanced topics</strong></li>
+</ul>
+
+<hr>
+<p id="bottom-note">
+Copyright &copy; 2016 by Greg Reimer (<a href="https://github.com/greim">github.com/greim</a>).
+Submit issues to the <a href="http://todo.example.com/">GitHub issues</a> page.
+</p>
+</div>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

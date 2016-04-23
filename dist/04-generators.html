@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Chapter IV: Generators</title>
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
+<link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="assets/styles.css">
+</head>
+<body>
+<div id="wrapper">
+<h1 id="chapter-iv-generators">Chapter IV: Generators</h1>
+<ul>
+<li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
+<li><a href="./01-pull-push.html">Chapter I: Pull vs. push</a></li>
+<li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
+<li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
+<li><strong>Chapter IV: Generators</strong></li>
+<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
+<li><a href="./06-recursion.html">Chapter VI: Delegation and recursion</a></li>
+<li><a href="./07-advanced-topics.html">Chapter VII: Advanced topics</a></li>
+</ul>
+<h2 id="the-problem">The problem</h2>
+<p>In the last chapter we discussed how to make anything for/of-able by using iterators. But I got stuck trying to do it for a binary search tree. Recall where we left off:</p>
+<pre><code class="lang-js">class Tree {
+
+  // Assume various BST methods already exist
+  // here like add() and remove()
+
+  [Symbol.iterator]() {
+    return {
+      next() {
+        // Put the algorithm here, maybe?
+      }
+    };
+  }
+}
+
+// Our tree-traversal algorithm.
+// Need to drop this in above somewhere...
+var queue = this.root ? [this.root] : [];
+while (queue.length &gt; 0) {
+  var node = queue.shift();
+  var value = node.value;
+  // &lt;-- Right here is where we have the value!
+  if (node.left) { queue.push(node.left); }
+  if (node.right) { queue.push(node.right); }
+}
+</code></pre>
+<p>Down in the guts of this tree-traversal algorithm, there&#39;s a point where we have the value in-hand. But since iteration is a pull model where the producer is passive, we can&#39;t just let the loop run to completion. We have to hand off the value, then suspend the loop mid-flight and wait... somehow.</p>
+<h2 id="the-solution">The solution</h2>
+<p>It turns out that <em>suspending and waiting</em> is exactly what generators do! The mechanics of this are discussed in more detail below, but let&#39;s just jump right to the solution. First, we declare <code>[Symbol.iterator]</code> as a generator by adding an asterisk <code>*</code>. Then we drop our algorithm in, unchanged. Finally, the handoff becomes a <code>yield</code> expression.</p>
+<pre><code class="lang-js">class Tree {
+  // ...
+  *[Symbol.iterator]() {
+    var queue = this.root ? [this.root] : [];
+    while (queue.length &gt; 0) {
+      var node = queue.shift();
+      yield node.value; // &lt;-- produce a value
+      if (node.left) { queue.push(node.left); }
+      if (node.right) { queue.push(node.right); }
+    }
+  }
+}
+
+// elsewhere...
+for (const value of tree) {
+  visit(value); // &lt;-- consume a value
+}
+</code></pre>
+<p>And because a generator returns an iterator, we&#39;ve satisfied the iterable and iterator protocols. Think of a generator as an ultra-convenient way to create iterators!</p>
+<h2 id="okay-but-how-do-generators-work-">Okay, but <em>how</em> do generators work?</h2>
+<p>Essentially, what happens is that when the <code>*[Symbol.iterator]</code> generator function is called, instead of running our algorithm to completion, JavaScript puts it into a <em>paused</em> state, without running it.</p>
+<p>Meanwhile, JavaScript returns an iterator &quot;<code>itr</code>&quot; to the caller. When <code>itr.next()</code> is called, JavaScript presses <em>play</em> on the algorithm, which runs right up until the point it encounters a <code>yield</code>, then pauses again. The yielded value is subsequently returned from <code>itr.next()</code> along with <code>done: false</code>.</p>
+<pre><code class="lang-js">{ value: /* whatever was yielded */, done: false }
+</code></pre>
+<p>This happens anywhere between zero and infinity times. If/when the generator algorithm hits a <code>return</code> instead of a <code>yield</code> (the return can be either implicit or explicit) the returned value is returned from <code>itr.next()</code> along with <code>done: true</code>.</p>
+<pre><code class="lang-js">{ value: /* whatever was returned */, done: true }
+</code></pre>
+<h2 id="generator-function-syntax">Generator function syntax</h2>
+<p>You have the full power of JavaScript syntax available to you inside a generator. <code>yield x</code> can go anywhere an expression is expected. <code>yield</code> (with nothing after it) is the same as saying <code>yield undefined</code>.</p>
+<pre><code class="lang-js">// `yield` can be crammed in
+// anywhere an expression goes
+var myString = `Hello ${yield 4}`;
+callSomeFunction(yield);
+var obj = { x: yield null };
+</code></pre>
+<p>Each way of making a function has a variant which turns that function into a generator. It always involved an asterisk.</p>
+<h3 id="function-declarations-and-expressions">Function declarations and expressions</h3>
+<pre><code class="lang-js">function* doStuff() { ... }
+var doStuff = function*() { ... }
+var doStuff = function* doStuff() { ... }
+var obj = { doStuff: function*() { ... } }
+</code></pre>
+<h3 id="object-literal-shorthand">Object literal shorthand</h3>
+<pre><code class="lang-js">var obj = { *doStuff() { ... } }
+var obj = { *[someExpression]() { ... } }
+</code></pre>
+<h3 id="class-method">Class method</h3>
+<pre><code class="lang-js">class Foo { *doStuff() { ... } }
+class Foo { *[someExpression]() { ... } }
+</code></pre>
+<hr>
+<ul>
+<li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
+<li><a href="./01-pull-push.html">Chapter I: Pull vs. push</a></li>
+<li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
+<li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
+<li><strong>Chapter IV: Generators</strong></li>
+<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
+<li><a href="./06-recursion.html">Chapter VI: Delegation and recursion</a></li>
+<li><a href="./07-advanced-topics.html">Chapter VII: Advanced topics</a></li>
+</ul>
+
+<hr>
+<p id="bottom-note">
+Copyright &copy; 2016 by Greg Reimer (<a href="https://github.com/greim">github.com/greim</a>).
+Submit issues to the <a href="http://todo.example.com/">GitHub issues</a> page.
+</p>
+</div>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
