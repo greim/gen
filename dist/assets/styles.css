@@ -33,6 +33,11 @@ hr {
   background:#f6f6f6;
   box-shadow: 0 0 .5em rgba(0,0,0,0.2);
 }
+@media (max-width: 800px) {
+  body {
+    font-size:2vw;
+  }
+}
 pre {
   font-family: Inconsolata, monospace;
   line-height: 1.3;
