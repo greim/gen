@@ -1,4 +1,4 @@
-# Chapter VI: Delegation and recursion
+# Chapter VII: Delegation and recursion
 
 {{ toc }}
 
@@ -31,10 +31,7 @@ tree (Tree)
    │  │  ├──value: 2
    │  │  ├──left (undefined)
    │  │  └──right (undefined)
-   │  └──right (Node)
-   │     ├──value: 4
-   │     ├──left (undefined)
-   │     └──right (undefined)
+   │  └──right (undefined)
    └──right (Node)
       ├──value: 7
       ├──left (undefined)
@@ -43,7 +40,7 @@ tree (Tree)
 
 ## Adding recursion to a generator: attempt one
 
-We'll make both `Tree` and `Node` iterable, and have `Tree` delegate to its root `Node`, if it exists. Then the root will recursively delegate to its left and right children, if they exist, etc.
+We'll make both `Tree` and `Node` iterable, and have `Tree` delegate to its root `Node`, if it exists. Then the root will recursively delegate to its left and right children, if they exist, etc. How do we perform the delegation? Let's try using a loop:
 
 ```js
 class Tree {
@@ -75,11 +72,11 @@ class Node {
 }
 ```
 
-Since `[Symbol.iterator]` has a for/of loop which calls `[Symbol.iterator]` on its children, we have recursion. However, we've written too much code! It turns out that generators have a much easier way to do delegation.
+This works, but we've written too much code! It turns out that generators have a much easier way to do delegation.
 
 ## Generator delegation
 
-Generators have the ability to delegate to any iterable. Whenever we `yield* obj`, where `obj` is iterable, we inline that sequence into the sequence we're generating. Read `yield* foo` as *yield all the things in foo*. All sorts of arbitrarily-deeply nested delegation could be happening, but in the end, the consumer just sees a flat stream.
+Generators have a special syntax to delegate to any iterable. Whenever we `yield* obj`, where `obj` is iterable, we inline that sequence into the sequence we're currently generating. Read `yield* foo` as *yield all the things in foo*. Even with arbitrarily-deeply nested delegation, the consumer always sees a flat stream.
 
 ```js
 function* a() {
@@ -98,8 +95,6 @@ for (let n of a()) {
 // => 4
 // => 2
 ```
-
-Important point: generators can delegate to *any iterable*, not just ones created by generators!
 
 ## Adding recursion to a generator: attempt two
 
@@ -123,7 +118,7 @@ class Node {
 }
 ```
 
-Read as: *yield all the things on the left, then yield this thing, then yield all the things on the right*. And voila! We have an in-order iteration that visits every value in the tree.
+And voila! We have an in-order iteration over every value in the tree.
 
 ----------------
 

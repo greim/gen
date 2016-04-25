@@ -1,10 +1,47 @@
-# Chapter VII: Advanced topics
+# Chapter VIII: Advanced topics
 
 {{ toc }}
 
 ## It's dangerous to go alone...
 
-The goal of this tutorial was to introduce generators as the centerpiece of iteration in ES6. With that done, we'll briefly look at a few advanced use cases which start to go beyond iteration. This isn't meant to be an exhaustive tour of every cool thing generators can do, just a few items to take with you as you leave and explore the world of generators on your own.
+The goal of this tutorial was to introduce generators as the centerpiece of iteration in ES6. With that done, we'll briefly look at a few advanced use cases. This isn't meant to be an exhaustive tour of everything about generators, just a few items to take with you as you leave and explore the world of generators on your own.
+
+## A word of warning
+
+Recall that iterators are stateful objects. When an iterator comes from a collection, it "remembers" its place in that collection at each step. Hence the rule: *Never modify a collection while iterating it.* Otherwise, things can go haywire since the iterator's state could be invalidated.
+
+```js
+// BAD!
+for (const val of collection) {
+  collection.remove(val);
+}
+```
+
+## For/of has more tricks up its sleeve
+
+For/of has a crazy ability that I totally wouldn't have expected: the value can be auto-assigned as a property on an object:
+
+```js
+var iterable = [ 1, 2 ];
+var obj = {};
+for (obj.x of iterable) {
+  console.log(JSON.stringify(obj));
+}
+// {"x":1}
+// {"x":2}
+```
+
+...or an index on an array:
+
+```js
+var iterable = [ 'earth', 'mars' ];
+var arr = ['hello'];
+for (arr[1] of iterable) {
+  console.log(JSON.stringify(arr));
+}
+// ["hello","earth"]
+// ["hello","mars"]
+```
 
 ## Functional programming over sequences
 

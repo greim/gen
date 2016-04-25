@@ -17,8 +17,7 @@ Suppose we have a `list` and a `tree` variable. We'll consume these collections 
 
 ```js
 for (var i=0; i<list.length; i++) {
-  var value = list[i];
-  visit(value);
+  visit(list[i]);
 }
 ```
 
@@ -34,8 +33,7 @@ A bit of googling turns up an algorithm we can use to "loop" it:
 var queue = tree.root ? [tree.root] : [];
 while (queue.length > 0) {
   var node = queue.shift();
-  var value = node.value;
-  visit(value);
+  visit(node.value);
   if (node.left) { queue.push(node.left); }
   if (node.right) { queue.push(node.right); }
 }
@@ -45,22 +43,22 @@ At least for me, it's annoying to have to memorize and type out this this pile o
 
 ## The push model
 
-If you're at all familiar with JavaScript, the above examples likely seem unsatisfactory. Let's switch to the *push* model, in which the *producer* takes charge by providing an `each()` (or similarly named) method that accepts a callback, which it uses to push values back at us. Let's assume both our list and our tree have such a method. Consuming them is a lot easier:
+If you're at all familiar with JavaScript, the above examples likely seem unsatisfactory. Let's switch to the *push* model, in which the *producer* takes charge by providing an `each()` method that accepts a callback, which it uses to push values back at us. Let's assume both our list and our tree have such a method. Consuming them is a lot easier:
 
 ```js
 list.each(elmt => visit(elmt));
 tree.each(elmt => visit(elmt));
 ```
 
-Not only have we written less code, but the messy details of state tracking and data structure implementation are encapsulated away from us, which is a much better separation of concerns.
+Not only have we written less code, but the messy details are encapsulated away from us, which is a much better separation of concerns.
 
 ## Unfortunate tradeoffs
 
 So the push model wins, right? Sadly, in the process of switching from pull to push, we lost some power and flexibility:
 
- * We can't `return` the outer function from inside the callback.
- * We can't `break` or `continue` from inside the callback.
- * We can't `yield` or `await` from within the callback.
+ * We can't `return` the outer function from inside a callback.
+ * We can't `break` or `continue` from inside a callback.
+ * We can't `yield` or `await` from within a callback.
 
 Those behaviors could be simulated using some sort of pre-agreed-upon signaling mechanism between the callback and the runner, but by then we've begun to re-invent the wheel, since the language gives us those capabilities for free with loops.
 
