@@ -26,18 +26,17 @@ class Tree {
 var queue = this.root ? [this.root] : [];
 while (queue.length > 0) {
   var node = queue.shift();
-  var value = node.value;
-  // <-- Right here is where we have the value!
+  // do something with node.value
   if (node.left) { queue.push(node.left); }
   if (node.right) { queue.push(node.right); }
 }
 ```
 
-Down in the guts of this tree-traversal algorithm, there's a point where we have the value in-hand. But since iteration is a pull model where the producer is passive, we can't just let the loop run to completion. We have to hand off the value, then suspend the loop mid-flight and wait... somehow.
+Down in the guts of this tree-traversal algorithm, there's a point where we have the value in-hand. But since iteration is a pull model where the consumer is in charge, we can't just let the loop run to completion. We have to hand off the value, then suspend the loop mid-flight and wait... somehow.
 
 ## The solution
 
-It turns out that *suspending and waiting* is exactly what generators do! The mechanics of this are discussed in more detail below, but let's just jump right to the solution. First, we declare `[Symbol.iterator]` as a generator by adding an asterisk `*`. Then we drop our algorithm in, unchanged. Finally, the handoff becomes a `yield` expression.
+It turns out that *suspending and waiting* is exactly what generators do! The mechanics of this are discussed in more detail below, but let's just jump right to the solution, in which we declare `[Symbol.iterator]` as a generator by adding an asterisk `*`, drop our algorithm in wholesale, then hand off the value using `yield`.
 
 ```js
 class Tree {
@@ -46,7 +45,7 @@ class Tree {
     var queue = this.root ? [this.root] : [];
     while (queue.length > 0) {
       var node = queue.shift();
-      yield node.value; // <-- produce a value
+      yield node.value; // <-- produce
       if (node.left) { queue.push(node.left); }
       if (node.right) { queue.push(node.right); }
     }
@@ -55,11 +54,11 @@ class Tree {
 
 // elsewhere...
 for (const value of tree) {
-  visit(value); // <-- consume a value
+  visit(value); // <-- consume
 }
 ```
 
-And because a generator returns an iterator, we've satisfied the iterable and iterator protocols. Think of a generator as an ultra-convenient way to create iterators!
+And because a generator returns an iterator, we've satisfied both the iterable and iterator protocols in one fell swoop.
 
 ## Okay, but *how* do generators work?
 
@@ -79,17 +78,13 @@ This happens anywhere between zero and infinity times. If/when the generator alg
 
 ## Generator function syntax
 
-You have the full power of JavaScript syntax available to you inside a generator. `yield x` can go anywhere an expression is expected. `yield` (with nothing after it) is the same as saying `yield undefined`.
+You have the full power of JavaScript syntax available to you inside a generator. `yield x` sends `x` out to the consumer. `yield` (with nothing after it) sends `undefined`. Furthermore, `yield x` can go anywhere an expression is expected.
 
 ```js
-// `yield` can be crammed in
-// anywhere an expression goes
-var myString = `Hello ${yield 4}`;
-callSomeFunction(yield);
-var obj = { x: yield null };
+var greeting = `Hello ${yield 4}`;
 ```
 
-Each way of making a function has a variant which turns that function into a generator. It always involved an asterisk.
+Each way of making a function has a variant which turns that function into a generator.
 
 ### Function declarations and expressions
 
