@@ -18,15 +18,16 @@
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><strong>Chapter III: Iterators</strong></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
-<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
-<li><a href="./06-recursion.html">Chapter VI: Delegation and recursion</a></li>
-<li><a href="./07-advanced-topics.html">Chapter VII: Advanced topics</a></li>
+<li><a href="./05-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
+<li><a href="./06-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
+<li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
 <h2 id="introducing-iteration-">Introducing <em>iteration</em></h2>
 <p>In the previous chapter, we learned how the for/of loop retains the powers of the pull model, while gaining the powers of the push model. But to understand <em>why</em> this is the case, we have to look at iterators.</p>
 <p>Here&#39;s a brief tour of the concepts involved. Take a look, and be sure to bookmark this spot for later as we dive into examples.</p>
 <h2 id="concept-iterables">Concept: Iterables</h2>
-<p>An <em>iterable</em> is any object that implements the <em>iterable protocol</em>. Any iterable can (among other things) be for/of&#39;d. Lots of things you encounter on a daily basis are iterable, such as arrays and strings.</p>
+<p>An <em>iterable</em> is any object that implements the <em>iterable protocol</em>. Any iterable can be for/of&#39;d. Lots of things you encounter on a daily basis are iterable, such as arrays and strings.</p>
 <h2 id="concept-the-iterable-protocol">Concept: The iterable protocol</h2>
 <p>To implement the iterable protocol, an object must have a <code>[Symbol.iterator]</code> property which is a function that receives no arguments and returns an <em>iterator</em>. (<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol">Read more about symbols</a>.)</p>
 <h2 id="concept-iterators">Concept: Iterators</h2>
@@ -34,12 +35,12 @@
 <h2 id="concept-the-iterator-protocol">Concept: The iterator protocol</h2>
 <p>To implement the iterator protocol, an object must have a <code>next</code> method that can be called over and over until iteration is done, at which point the iterator is depleted. Every call to <code>next()</code> returns a <code>{done,value}</code> object. While the iterator isn&#39;t depleted, <code>done</code> will be false. After it&#39;s depleted, <code>done</code> will be true.</p>
 <h2 id="iteration-protocols-in-action">Iteration protocols in action</h2>
-<p>To illustrate, let&#39;s create an iterator from an array and then deplete it by invoking the protocols manually.</p>
-<pre><code class="lang-js">// create an iterable
-var arr = [ 2, 4, 6 ];
+<p>To illustrate, let&#39;s create an iterator from an array and then deplete it by invoking the protocols manually. We&#39;ll use an array, since we know arrays are iterable:</p>
+<pre><code class="lang-js">// create the iterable
+var array = [ 2, 4, 6 ];
 
 // create an iterator
-var itr = arr[Symbol.iterator]();
+var itr = array[Symbol.iterator]();
 
 // deplete the iterator
 console.log(itr.next()); // { done: false, value: 2 }
@@ -47,9 +48,8 @@ console.log(itr.next()); // { done: false, value: 4 }
 console.log(itr.next()); // { done: false, value: 6 }
 console.log(itr.next()); // { done: true, value: undefined }
 </code></pre>
-<p>...which we&#39;ll obviously want to make into a loop:</p>
-<pre><code class="lang-js">var arr = [ 2, 4, 6 ];
-var itr = arr[Symbol.iterator]();
+<p>Obviously we&#39;ll want to make that into a loop:</p>
+<pre><code class="lang-js">var itr = array[Symbol.iterator]();
 while (true) {
   var next = itr.next();
   if (!next.done) {
@@ -59,19 +59,18 @@ while (true) {
   }
 }
 </code></pre>
-<p>...which is just a manual way of doing what for/of loops do for you automatically:</p>
-<pre><code class="lang-js">var arr = [ 2, 4, 6 ];
-for (var n of arr) {
+<p>...which is just a manual way of doing what for/of loops do automatically:</p>
+<pre><code class="lang-js">for (var n of array) {
   console.log(n);
 }
 </code></pre>
 <h2 id="iterators-are-conceptually-yummy">Iterators are conceptually yummy</h2>
-<p>Iterators bring some interesting ideas to the table.</p>
+<p>Iterators bring some theoretical goodness to the table.</p>
 <ul>
 <li><strong>Separation of concerns</strong>: In pre-ES6 pull/push scenarios, either the consumer or producer was fully in charge. With iterators, responsibility is more evenly split. The consumer is in charge of deciding if and when to pull out the next thing, while the producer is in charge of how to provide the thing. This is a better separation of concerns, and sets the state for everything that follows.</li>
 <li><strong>Abstract sequences</strong>: So far we&#39;ve only looked at iterators as a way of looping a collection, but this is too conceptually narrow. Iterators go beyond collections, and even beyond for/of loops. Think of them as a general-purpose way to represent any <em>abstract sequence</em>.</li>
-<li><strong>Infinite sequences</strong>: The ability to represent any abstract sequence means that iterators can represent <em>infinite or really long sequences</em>. It&#39;s up to the consumer to decide how much of that sequence to consume before bailing out of the iteration.</li>
-<li><strong>Lazy sequences</strong>: A lazy sequence doesn&#39;t generate a value until the moment the consumer asks for it. This saves both memory and CPU cycles, especially in cases where consumers might bail out of iteration before exhausting the sequence. And of course infinite sequences aren&#39;t even possible unless they&#39;re lazy.</li>
+<li><strong>Infinite sequences</strong>: The ability to represent any abstract sequence means that iterators can represent <em>infinite or really long sequences</em>. It&#39;s up to the consumer to decide how much of that sequence to consume before bailing out of the for/of loop.</li>
+<li><strong>Lazy sequences</strong>: A lazy sequence doesn&#39;t generate a value until the moment the consumer asks for it. This saves both memory and CPU cycles, especially in cases where consumers might bail out of loop before exhausting the sequence. And of course infinite sequences are only possible <em>because</em> they&#39;re lazy.</li>
 </ul>
 <h2 id="example-1-a-range-function">Example 1: a range() function</h2>
 <p>Armed with all of this amazing theoretical machinery, let&#39;s try to implement the iterable protocol and make a <code>range()</code> function:</p>
@@ -99,7 +98,7 @@ for (var n of range(3, 5)) {
 // =&gt; 4
 // =&gt; 5
 </code></pre>
-<p>Honestly, that was tedious to type out, and it&#39;s even more tedious to read. I&#39;d probably avoid making iterators if it required doing this sort of thing regularly. But anyhow it works.</p>
+<p>Ugh, that was tedious to type out, and it&#39;s even more tedious to read. I&#39;d probably avoid making iterators if it required doing this sort of thing regularly. But all of that aside, it works.</p>
 <p>Note that it&#39;s is a <em>lazy sequence</em>: at no point do we retain the whole range in memory. Calling <code>range(0, Infinity)</code> is fine, as long as we don&#39;t try to exhaust the sequence!</p>
 <h2 id="example-2-binary-search-tree-iteration">Example 2: binary search tree iteration</h2>
 <p>Flushed with success, let&#39;s try implementing iterable on our binary search tree from the first chapter. Here&#39;s all the ingredients laid out for us, we merely need to assemble them together, somehow:</p>
@@ -122,8 +121,7 @@ for (var n of range(3, 5)) {
 var queue = this.root ? [this.root] : [];
 while (queue.length &gt; 0) {
   var node = queue.shift();
-  var value = node.value;
-  // &lt;-- Right here is where we have the value!
+  // do something with node.value
   if (node.left) { queue.push(node.left); }
   if (node.right) { queue.push(node.right); }
 }
@@ -137,9 +135,10 @@ while (queue.length &gt; 0) {
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><strong>Chapter III: Iterators</strong></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
-<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
-<li><a href="./06-recursion.html">Chapter VI: Delegation and recursion</a></li>
-<li><a href="./07-advanced-topics.html">Chapter VII: Advanced topics</a></li>
+<li><a href="./05-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
+<li><a href="./06-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
+<li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
 
 <hr>

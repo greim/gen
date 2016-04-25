@@ -18,9 +18,10 @@
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
-<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
-<li><a href="./06-recursion.html">Chapter VI: Delegation and recursion</a></li>
-<li><a href="./07-advanced-topics.html">Chapter VII: Advanced topics</a></li>
+<li><a href="./05-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
+<li><a href="./06-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
+<li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
 <h2 id="looping-collections">Looping collections</h2>
 <p>We&#39;ll kick things off by looking at <em>collections</em>, which is just a generic term for a thing that contains things. Some examples:</p>
@@ -32,8 +33,7 @@
 <h2 id="the-pull-model">The pull model</h2>
 <p>Suppose we have a <code>list</code> and a <code>tree</code> variable. We&#39;ll consume these collections by <em>pulling</em> elements out sequentially. In the pull model, the consumer is fully in charge:</p>
 <pre><code class="lang-js">for (var i=0; i&lt;list.length; i++) {
-  var value = list[i];
-  visit(value);
+  visit(list[i]);
 }
 </code></pre>
 <p>Yes, there are easier ways to loop an array, but let&#39;s not get ahead of ourselves; we still have our <code>tree</code> to worry about! Consuming that is tougher, since how do you loop a non-linear thing? Let&#39;s assume it&#39;s a <a href="https://en.wikipedia.org/wiki/Binary_search_tree">binary search tree</a>, where every node has the following:</p>
@@ -46,25 +46,24 @@
 <pre><code class="lang-js">var queue = tree.root ? [tree.root] : [];
 while (queue.length &gt; 0) {
   var node = queue.shift();
-  var value = node.value;
-  visit(value);
+  visit(node.value);
   if (node.left) { queue.push(node.left); }
   if (node.right) { queue.push(node.right); }
 }
 </code></pre>
 <p>At least for me, it&#39;s annoying to have to memorize and type out this this pile of code every time I want to loop a tree, but since this is the pull model and I&#39;m in charge, it falls to me to handle all this stuff.</p>
 <h2 id="the-push-model">The push model</h2>
-<p>If you&#39;re at all familiar with JavaScript, the above examples likely seem unsatisfactory. Let&#39;s switch to the <em>push</em> model, in which the <em>producer</em> takes charge by providing an <code>each()</code> (or similarly named) method that accepts a callback, which it uses to push values back at us. Let&#39;s assume both our list and our tree have such a method. Consuming them is a lot easier:</p>
+<p>If you&#39;re at all familiar with JavaScript, the above examples likely seem unsatisfactory. Let&#39;s switch to the <em>push</em> model, in which the <em>producer</em> takes charge by providing an <code>each()</code> method that accepts a callback, which it uses to push values back at us. Let&#39;s assume both our list and our tree have such a method. Consuming them is a lot easier:</p>
 <pre><code class="lang-js">list.each(elmt =&gt; visit(elmt));
 tree.each(elmt =&gt; visit(elmt));
 </code></pre>
-<p>Not only have we written less code, but the messy details of state tracking and data structure implementation are encapsulated away from us, which is a much better separation of concerns.</p>
+<p>Not only have we written less code, but the messy details are encapsulated away from us, which is a much better separation of concerns.</p>
 <h2 id="unfortunate-tradeoffs">Unfortunate tradeoffs</h2>
 <p>So the push model wins, right? Sadly, in the process of switching from pull to push, we lost some power and flexibility:</p>
 <ul>
-<li>We can&#39;t <code>return</code> the outer function from inside the callback.</li>
-<li>We can&#39;t <code>break</code> or <code>continue</code> from inside the callback.</li>
-<li>We can&#39;t <code>yield</code> or <code>await</code> from within the callback.</li>
+<li>We can&#39;t <code>return</code> the outer function from inside a callback.</li>
+<li>We can&#39;t <code>break</code> or <code>continue</code> from inside a callback.</li>
+<li>We can&#39;t <code>yield</code> or <code>await</code> from within a callback.</li>
 </ul>
 <p>Those behaviors could be simulated using some sort of pre-agreed-upon signaling mechanism between the callback and the runner, but by then we&#39;ve begun to re-invent the wheel, since the language gives us those capabilities for free with loops.</p>
 <hr>
@@ -74,9 +73,10 @@ tree.each(elmt =&gt; visit(elmt));
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
-<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
-<li><a href="./06-recursion.html">Chapter VI: Delegation and recursion</a></li>
-<li><a href="./07-advanced-topics.html">Chapter VII: Advanced topics</a></li>
+<li><a href="./05-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
+<li><a href="./06-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
+<li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
 
 <hr>

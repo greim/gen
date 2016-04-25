@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chapter VI: Delegation and recursion</title>
+<title>Chapter VII: Delegation and recursion</title>
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
 <link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300' rel='stylesheet' type='text/css'>
@@ -11,16 +11,17 @@
 </head>
 <body>
 <div id="wrapper">
-<h1 id="chapter-vi-delegation-and-recursion">Chapter VI: Delegation and recursion</h1>
+<h1 id="chapter-vii-delegation-and-recursion">Chapter VII: Delegation and recursion</h1>
 <ul>
 <li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
 <li><a href="./01-pull-push.html">Chapter I: Pull vs. push</a></li>
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
-<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
-<li><strong>Chapter VI: Delegation and recursion</strong></li>
-<li><a href="./07-advanced-topics.html">Chapter VII: Advanced topics</a></li>
+<li><a href="./05-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
+<li><a href="./06-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><strong>Chapter VII: Delegation and recursion</strong></li>
+<li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
 <h2 id="revisiting-our-tree-traversal">Revisiting our tree traversal</h2>
 <p>In a previous chapter, we pimped out our binary search tree with generator-based iteration. Venturing a bit further down that rabbit hole, we note that we used <a href="https://en.wikipedia.org/wiki/Breadth-first_search">breadth-first iteration</a>, meaning that we visited every value at the child level before moving to the grandchild level, etc.</p>
@@ -44,16 +45,13 @@ while (queue.length &gt; 0) {
    │  │  ├──value: 2
    │  │  ├──left (undefined)
    │  │  └──right (undefined)
-   │  └──right (Node)
-   │     ├──value: 4
-   │     ├──left (undefined)
-   │     └──right (undefined)
+   │  └──right (undefined)
    └──right (Node)
       ├──value: 7
       ├──left (undefined)
       └──right (undefined)
 </code></pre><h2 id="adding-recursion-to-a-generator-attempt-one">Adding recursion to a generator: attempt one</h2>
-<p>We&#39;ll make both <code>Tree</code> and <code>Node</code> iterable, and have <code>Tree</code> delegate to its root <code>Node</code>, if it exists. Then the root will recursively delegate to its left and right children, if they exist, etc.</p>
+<p>We&#39;ll make both <code>Tree</code> and <code>Node</code> iterable, and have <code>Tree</code> delegate to its root <code>Node</code>, if it exists. Then the root will recursively delegate to its left and right children, if they exist, etc. How do we perform the delegation? Let&#39;s try using a loop:</p>
 <pre><code class="lang-js">class Tree {
   // ...
   *[Symbol.iterator]() {
@@ -82,9 +80,9 @@ class Node {
   }
 }
 </code></pre>
-<p>Since <code>[Symbol.iterator]</code> has a for/of loop which calls <code>[Symbol.iterator]</code> on its children, we have recursion. However, we&#39;ve written too much code! It turns out that generators have a much easier way to do delegation.</p>
+<p>This works, but we&#39;ve written too much code! It turns out that generators have a much easier way to do delegation.</p>
 <h2 id="generator-delegation">Generator delegation</h2>
-<p>Generators have the ability to delegate to any iterable. Whenever we <code>yield* obj</code>, where <code>obj</code> is iterable, we inline that sequence into the sequence we&#39;re generating. Read <code>yield* foo</code> as <em>yield all the things in foo</em>. All sorts of arbitrarily-deeply nested delegation could be happening, but in the end, the consumer just sees a flat stream.</p>
+<p>Generators have a special syntax to delegate to any iterable. Whenever we <code>yield* obj</code>, where <code>obj</code> is iterable, we inline that sequence into the sequence we&#39;re currently generating. Read <code>yield* foo</code> as <em>yield all the things in foo</em>. Even with arbitrarily-deeply nested delegation, the consumer always sees a flat stream.</p>
 <pre><code class="lang-js">function* a() {
   yield 1;
   yield* arr;
@@ -101,7 +99,6 @@ for (let n of a()) {
 // =&gt; 4
 // =&gt; 2
 </code></pre>
-<p>Important point: generators can delegate to <em>any iterable</em>, not just ones created by generators!</p>
 <h2 id="adding-recursion-to-a-generator-attempt-two">Adding recursion to a generator: attempt two</h2>
 <p>Going back and applying this to our tree, we get this:</p>
 <pre><code class="lang-js">class Tree {
@@ -120,7 +117,7 @@ class Node {
   }
 }
 </code></pre>
-<p>Read as: <em>yield all the things on the left, then yield this thing, then yield all the things on the right</em>. And voila! We have an in-order iteration that visits every value in the tree.</p>
+<p>And voila! We have an in-order iteration over every value in the tree.</p>
 <hr>
 <ul>
 <li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
@@ -128,9 +125,10 @@ class Node {
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
-<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
-<li><strong>Chapter VI: Delegation and recursion</strong></li>
-<li><a href="./07-advanced-topics.html">Chapter VII: Advanced topics</a></li>
+<li><a href="./05-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
+<li><a href="./06-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><strong>Chapter VII: Delegation and recursion</strong></li>
+<li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
 
 <hr>

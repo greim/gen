@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter VI: Polymorphic iterators</title>
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
+<link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="assets/styles.css">
+</head>
+<body>
+<div id="wrapper">
+<h1 id="chapter-vi-polymorphic-iterators">Chapter VI: Polymorphic iterators</h1>
+<ul>
+<li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
+<li><a href="./01-pull-push.html">Chapter I: Pull vs. push</a></li>
+<li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
+<li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
+<li><a href="./04-generators.html">Chapter IV: Generators</a></li>
+<li><a href="./05-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
+<li><strong>Chapter VI: Polymorphic iterators</strong></li>
+<li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
+<li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
+</ul>
+<h2 id="a-rabbit-hole">A rabbit hole</h2>
+<p>Having covered the basics of iteration and generators, we now take a break in order to go down a bit of a rabbit-hole.</p>
+<p>Recall that iterators and iterables are separate things. Well, plot twist: Pretty much every <em>native</em> JavaScript iterator object self-referentially implements the iterable protocol by having a <code>[Symbol.iterator]</code> method which returns <code>this</code>. Thus, some objects end up being both iterators and iterables, simultaneously!</p>
+<h2 id="possibly-confusing-but-useful">Possibly confusing, but useful</h2>
+<p>If you&#39;re like me, this fact will hurt your brain... at first. But as it happens, there&#39;s a good reason for it, since it allows passing any iterator where an iterable is expected. Why would I want to do that, you ask? Because more than just <code>[Symbol.iterator]</code> methods can return iterators. For example, an ES6 <code>Map</code> has a <code>keys()</code> method that returns an iterator. Since it&#39;s also an iterable, this works:</p>
+<pre><code class="lang-js">for (const key of map.keys()) {
+  // ...
+}
+</code></pre>
+<p>...otherwise you&#39;d get a TypeError, since for/of only accepts an iterable.</p>
+<h2 id="what-does-this-mean-for-you-">What does this mean for you?</h2>
+<p>This shakes out in a number of ways in practice.</p>
+<h3 id="always-deal-in-iterables">Always deal in iterables</h3>
+<p>You&#39;ll generally want to structure your programs to always work with iterables, never iterators. Along those lines, you should almost never be explicitly calling <code>[Symbol.iterator]()</code> and <code>iterator.next()</code>. Let for/of and other language-level constructs handle that for you. That way, no matter whether an iterable or iterator is passed to your program, as long as you treat it as an iterable, you&#39;re covered.</p>
+<h3 id="know-your-iterators">Know your iterators</h3>
+<p>Iterators are <em>unicast</em> by design, meaning that when one consumer pulls out a value, no other consumer will ever see it. Thus, even though you&#39;ve structured your code to deal exclusively in iterables, you&#39;re still sort of on the hook to know which things are actually iterators.</p>
+<pre><code class="lang-js">var keys1 = Object.keys(obj); // iterable
+var keys2 = map.keys(); // iterator
+
+for (var x of keys1) { ... } // can do this again
+for (var x of keys2) { ... } // can NOT do this again
+</code></pre>
+<p>Personally, I like to avoid explicitly storing references to iterators in variables. For example by calling <code>map.keys()</code> directly inside the for/of loop, I avoid having to remember whether variable X is a iterator in the first place:</p>
+<pre><code class="lang-js">for (var x of map.keys()) { ... }
+</code></pre>
+<h3 id="when-in-doubt-don-t">When in doubt, don&#39;t</h3>
+<p>In many scenarios it&#39;s impossible to know, such as a function that accepts an iterable from somewhere else:</p>
+<pre><code class="lang-js">function doStuff(iterable) {
+  for (let x of iterable) {
+    // process x
+  }
+}
+</code></pre>
+<p>In that case it&#39;s best to just never consume the iterable more than once.</p>
+<hr>
+<ul>
+<li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
+<li><a href="./01-pull-push.html">Chapter I: Pull vs. push</a></li>
+<li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
+<li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
+<li><a href="./04-generators.html">Chapter IV: Generators</a></li>
+<li><a href="./05-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
+<li><strong>Chapter VI: Polymorphic iterators</strong></li>
+<li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
+<li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
+</ul>
+
+<hr>
+<p id="bottom-note">
+Copyright &copy; 2016 by Greg Reimer (<a href="https://github.com/greim">github.com/greim</a>).
+Submit issues to the <a href="https://github.com/greim/gen/issues">GitHub issues</a> page.
+</p>
+</div>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

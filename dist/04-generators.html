@@ -18,9 +18,10 @@
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><strong>Chapter IV: Generators</strong></li>
-<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
-<li><a href="./06-recursion.html">Chapter VI: Delegation and recursion</a></li>
-<li><a href="./07-advanced-topics.html">Chapter VII: Advanced topics</a></li>
+<li><a href="./05-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
+<li><a href="./06-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
+<li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
 <h2 id="the-problem">The problem</h2>
 <p>In the last chapter we discussed how to make anything for/of-able by using iterators. But I got stuck trying to do it for a binary search tree. Recall where we left off:</p>
@@ -43,22 +44,21 @@
 var queue = this.root ? [this.root] : [];
 while (queue.length &gt; 0) {
   var node = queue.shift();
-  var value = node.value;
-  // &lt;-- Right here is where we have the value!
+  // do something with node.value
   if (node.left) { queue.push(node.left); }
   if (node.right) { queue.push(node.right); }
 }
 </code></pre>
-<p>Down in the guts of this tree-traversal algorithm, there&#39;s a point where we have the value in-hand. But since iteration is a pull model where the producer is passive, we can&#39;t just let the loop run to completion. We have to hand off the value, then suspend the loop mid-flight and wait... somehow.</p>
+<p>Down in the guts of this tree-traversal algorithm, there&#39;s a point where we have the value in-hand. But since iteration is a pull model where the consumer is in charge, we can&#39;t just let the loop run to completion. We have to hand off the value, then suspend the loop mid-flight and wait... somehow.</p>
 <h2 id="the-solution">The solution</h2>
-<p>It turns out that <em>suspending and waiting</em> is exactly what generators do! The mechanics of this are discussed in more detail below, but let&#39;s just jump right to the solution. First, we declare <code>[Symbol.iterator]</code> as a generator by adding an asterisk <code>*</code>. Then we drop our algorithm in, unchanged. Finally, the handoff becomes a <code>yield</code> expression.</p>
+<p>It turns out that <em>suspending and waiting</em> is exactly what generators do! The mechanics of this are discussed in more detail below, but let&#39;s just jump right to the solution, in which we declare <code>[Symbol.iterator]</code> as a generator by adding an asterisk <code>*</code>, drop our algorithm in wholesale, then hand off the value using <code>yield</code>.</p>
 <pre><code class="lang-js">class Tree {
   // ...
   *[Symbol.iterator]() {
     var queue = this.root ? [this.root] : [];
     while (queue.length &gt; 0) {
       var node = queue.shift();
-      yield node.value; // &lt;-- produce a value
+      yield node.value; // &lt;-- produce
       if (node.left) { queue.push(node.left); }
       if (node.right) { queue.push(node.right); }
     }
@@ -67,10 +67,10 @@ while (queue.length &gt; 0) {
 
 // elsewhere...
 for (const value of tree) {
-  visit(value); // &lt;-- consume a value
+  visit(value); // &lt;-- consume
 }
 </code></pre>
-<p>And because a generator returns an iterator, we&#39;ve satisfied the iterable and iterator protocols. Think of a generator as an ultra-convenient way to create iterators!</p>
+<p>And because a generator returns an iterator, we&#39;ve satisfied both the iterable and iterator protocols in one fell swoop.</p>
 <h2 id="okay-but-how-do-generators-work-">Okay, but <em>how</em> do generators work?</h2>
 <p>Essentially, what happens is that when the <code>*[Symbol.iterator]</code> generator function is called, instead of running our algorithm to completion, JavaScript puts it into a <em>paused</em> state, without running it.</p>
 <p>Meanwhile, JavaScript returns an iterator &quot;<code>itr</code>&quot; to the caller. When <code>itr.next()</code> is called, JavaScript presses <em>play</em> on the algorithm, which runs right up until the point it encounters a <code>yield</code>, then pauses again. The yielded value is subsequently returned from <code>itr.next()</code> along with <code>done: false</code>.</p>
@@ -80,14 +80,10 @@ for (const value of tree) {
 <pre><code class="lang-js">{ value: /* whatever was returned */, done: true }
 </code></pre>
 <h2 id="generator-function-syntax">Generator function syntax</h2>
-<p>You have the full power of JavaScript syntax available to you inside a generator. <code>yield x</code> can go anywhere an expression is expected. <code>yield</code> (with nothing after it) is the same as saying <code>yield undefined</code>.</p>
-<pre><code class="lang-js">// `yield` can be crammed in
-// anywhere an expression goes
-var myString = `Hello ${yield 4}`;
-callSomeFunction(yield);
-var obj = { x: yield null };
+<p>You have the full power of JavaScript syntax available to you inside a generator. <code>yield x</code> sends <code>x</code> out to the consumer. <code>yield</code> (with nothing after it) sends <code>undefined</code>. Furthermore, <code>yield x</code> can go anywhere an expression is expected.</p>
+<pre><code class="lang-js">var greeting = `Hello ${yield 4}`;
 </code></pre>
-<p>Each way of making a function has a variant which turns that function into a generator. It always involved an asterisk.</p>
+<p>Each way of making a function has a variant which turns that function into a generator.</p>
 <h3 id="function-declarations-and-expressions">Function declarations and expressions</h3>
 <pre><code class="lang-js">function* doStuff() { ... }
 var doStuff = function*() { ... }
@@ -109,9 +105,10 @@ class Foo { *[someExpression]() { ... } }
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><strong>Chapter IV: Generators</strong></li>
-<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
-<li><a href="./06-recursion.html">Chapter VI: Delegation and recursion</a></li>
-<li><a href="./07-advanced-topics.html">Chapter VII: Advanced topics</a></li>
+<li><a href="./05-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
+<li><a href="./06-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
+<li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
 
 <hr>

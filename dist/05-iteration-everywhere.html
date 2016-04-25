@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter X: Where is iteration used?</title>
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
+<link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="assets/styles.css">
+</head>
+<body>
+<div id="wrapper">
+<h1 id="chapter-x-where-is-iteration-used-">Chapter X: Where is iteration used?</h1>
+<ul>
+<li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
+<li><a href="./01-pull-push.html">Chapter I: Pull vs. push</a></li>
+<li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
+<li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
+<li><a href="./04-generators.html">Chapter IV: Generators</a></li>
+<li><strong>Chapter X: Where is iteration used?</strong></li>
+<li><a href="./06-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
+<li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
+</ul>
+<h2 id="what-else-can-iterators-do-">What else can iterators do?</h2>
+<p>The power of iteration is the power of generators, and vice versa. Thus, even though this is a tutorial about generators, we continue exploring iteration. The fact is, for/of isn&#39;t the only place where ES6 natively supports iteration. Here are a few others.</p>
+<h3 id="spread-operators">Spread operators</h3>
+<pre><code class="lang-js">function* foo() { yield 1, yield 2, yield 3; }
+function bar() { console.log(arguments); }
+bar(...foo()); // =&gt; { 0: 1, 1: 2, 2: 3 }
+</code></pre>
+<pre><code class="lang-js">function* foo() { yield 1, yield 2, yield 3; }
+console.log([...foo()]); // =&gt; [ 1, 2, 3 ]
+</code></pre>
+<h3 id="destructuring">Destructuring</h3>
+<pre><code class="lang-js">function* foo() { yield 1, yield 2, yield 3; }
+const [ x, y, z ] = foo();
+console.log(x); // =&gt; 1
+console.log(y); // =&gt; 2
+console.log(z); // =&gt; 3
+</code></pre>
+<h3 id="construction-of-maps-and-sets">Construction of maps and sets</h3>
+<pre><code class="lang-js">function* foo() { yield 1, yield 2, yield 3; }
+const set = new Set(foo());
+console.log(set.has(1)); // =&gt; true
+console.log(set.has(2)); // =&gt; true
+console.log(set.has(3)); // =&gt; true
+</code></pre>
+<pre><code class="lang-js">function* foo() { yield [&#39;a&#39;, 1], yield [&#39;b&#39;, 2]; }
+const map = new Map(foo());
+console.log(map.get(&#39;a&#39;)); // =&gt; 1
+console.log(map.get(&#39;b&#39;)); // =&gt; 2
+</code></pre>
+<h3 id="array-from-">Array.from()</h3>
+<pre><code class="lang-js">function* foo() { yield 1, yield 2, yield 3; }
+console.log(Array.from(foo())); // =&gt; [ 1, 2, 3 ]
+</code></pre>
+<h3 id="promise-all-">Promise.all()</h3>
+<pre><code class="lang-js">function* foo() {
+  yield Promise.resolve(1);
+  yield Promise.resolve(2);
+  yield Promise.resolve(3);
+}
+Promise.all(foo()).then(arr =&gt; {
+  console.log(arr); // =&gt; [ 1, 2, 3 ]
+});
+</code></pre>
+<h3 id="generator-delegation">Generator delegation</h3>
+<pre><code class="lang-js">function* foo() { yield 1, yield 2, yield 3; }
+function* bar() { yield* foo(); }
+const arr = Array.from(bar());
+console.log(arr); // =&gt; [ 1, 2, 3 ]
+</code></pre>
+<hr>
+<ul>
+<li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
+<li><a href="./01-pull-push.html">Chapter I: Pull vs. push</a></li>
+<li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
+<li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
+<li><a href="./04-generators.html">Chapter IV: Generators</a></li>
+<li><strong>Chapter X: Where is iteration used?</strong></li>
+<li><a href="./06-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
+<li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
+</ul>
+
+<hr>
+<p id="bottom-note">
+Copyright &copy; 2016 by Greg Reimer (<a href="https://github.com/greim">github.com/greim</a>).
+Submit issues to the <a href="https://github.com/greim/gen/issues">GitHub issues</a> page.
+</p>
+</div>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

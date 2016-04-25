@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chapter VII: Advanced topics</title>
+<title>Chapter VIII: Advanced topics</title>
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
 <link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300' rel='stylesheet' type='text/css'>
@@ -11,19 +11,46 @@
 </head>
 <body>
 <div id="wrapper">
-<h1 id="chapter-vii-advanced-topics">Chapter VII: Advanced topics</h1>
+<h1 id="chapter-viii-advanced-topics">Chapter VIII: Advanced topics</h1>
 <ul>
 <li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
 <li><a href="./01-pull-push.html">Chapter I: Pull vs. push</a></li>
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
-<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
-<li><a href="./06-recursion.html">Chapter VI: Delegation and recursion</a></li>
-<li><strong>Chapter VII: Advanced topics</strong></li>
+<li><a href="./05-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
+<li><a href="./06-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
+<li><strong>Chapter VIII: Advanced topics</strong></li>
 </ul>
 <h2 id="it-s-dangerous-to-go-alone-">It&#39;s dangerous to go alone...</h2>
-<p>The goal of this tutorial was to introduce generators as the centerpiece of iteration in ES6. With that done, we&#39;ll briefly look at a few advanced use cases which start to go beyond iteration. This isn&#39;t meant to be an exhaustive tour of every cool thing generators can do, just a few items to take with you as you leave and explore the world of generators on your own.</p>
+<p>The goal of this tutorial was to introduce generators as the centerpiece of iteration in ES6. With that done, we&#39;ll briefly look at a few advanced use cases. This isn&#39;t meant to be an exhaustive tour of everything about generators, just a few items to take with you as you leave and explore the world of generators on your own.</p>
+<h2 id="a-word-of-warning">A word of warning</h2>
+<p>Recall that iterators are stateful objects. When an iterator comes from a collection, it &quot;remembers&quot; its place in that collection at each step. Hence the rule: <em>Never modify a collection while iterating it.</em> Otherwise, things can go haywire since the iterator&#39;s state could be invalidated.</p>
+<pre><code class="lang-js">// BAD!
+for (const val of collection) {
+  collection.remove(val);
+}
+</code></pre>
+<h2 id="for-of-has-more-tricks-up-its-sleeve">For/of has more tricks up its sleeve</h2>
+<p>For/of has a crazy ability that I totally wouldn&#39;t have expected: the value can be auto-assigned as a property on an object:</p>
+<pre><code class="lang-js">var iterable = [ 1, 2 ];
+var obj = {};
+for (obj.x of iterable) {
+  console.log(JSON.stringify(obj));
+}
+// {&quot;x&quot;:1}
+// {&quot;x&quot;:2}
+</code></pre>
+<p>...or an index on an array:</p>
+<pre><code class="lang-js">var iterable = [ &#39;earth&#39;, &#39;mars&#39; ];
+var arr = [&#39;hello&#39;];
+for (arr[1] of iterable) {
+  console.log(JSON.stringify(arr));
+}
+// [&quot;hello&quot;,&quot;earth&quot;]
+// [&quot;hello&quot;,&quot;mars&quot;]
+</code></pre>
 <h2 id="functional-programming-over-sequences">Functional programming over sequences</h2>
 <p>Considering that iteration introduces a conceptual shift from <em>collections</em> to <em>abstract sequences</em>, collection-oriented libraries like lodash start to seem incomplete. Operations like map, filter, and reduce can just as easily operate on infinite or lazy sequences, for example. The <a href="https://fitzgen.github.io/wu.js/">wu library</a> offers these kinds of capabilities, and can be thought of as &quot;lodash for iterators&quot;:</p>
 <pre><code class="lang-js">const evenSquares = wu(range(0, Infinity))
@@ -109,9 +136,10 @@ getGreeting().then(
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
-<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
-<li><a href="./06-recursion.html">Chapter VI: Delegation and recursion</a></li>
-<li><strong>Chapter VII: Advanced topics</strong></li>
+<li><a href="./05-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
+<li><a href="./06-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
+<li><strong>Chapter VIII: Advanced topics</strong></li>
 </ul>
 
 <hr>
