@@ -47,15 +47,15 @@ for (var value of arr) {
 <li>We don&#39;t need to worry about when to end the loop.</li>
 <li>We don&#39;t need to know any specifics about the data structure.</li>
 </ul>
-<p>In other words, for/of retains the benefits of the pull model, while also gaining benefits of the push model!</p>
+<p>In other words, for/of retains the benefits of the pull model, while also gaining benefits of the push model. Oh how the mighty have fallen; the pull model is back in business!</p>
 <h2 id="lots-of-things-are-for-of-able">Lots of things are for/of-able</h2>
-<p>Arrays are just one of many things in ES6 can be for/of&#39;d, including:</p>
+<p>There&#39;s more good news: arrays are just one of many things in ES6 can be for/of&#39;d. Other things include:</p>
 <ul>
-<li>Maps</li>
-<li>Sets</li>
-<li>Strings</li>
-<li>Function arguments objects</li>
-<li>DOM collections</li>
+<li>Looping a <code>Map</code> gives you a sequence of key/value pairs.</li>
+<li>Looping a <code>Set</code> gives you a sequence of items.</li>
+<li>Looping a string gives you a sequence of characters.</li>
+<li>Looping an <code>arguments</code> object in a function gives you a sequence of arguments.</li>
+<li>Looping a DOM collection (e.g. what you get from <code>document.querySelectorAll()</code> or <code>elmt.getElementsByClassName()</code>) gives you a sequence of DOM elements.</li>
 </ul>
 <p>This raises the question: what makes something for/of-able? Are only built-in objects for/of-able, or could our binary search tree from the last chapter also be looped using for/of? That&#39;s where ES6 iterators come in, and it&#39;s the topic of the next chapter.</p>
 <hr>
