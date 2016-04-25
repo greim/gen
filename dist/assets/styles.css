@@ -33,7 +33,7 @@ hr {
   background:#f6f6f6;
   box-shadow: 0 0 .5em rgba(0,0,0,0.2);
 }
-@media (max-width: 800px) {
+@media (max-width: 700px) {
   body {
     font-size:2vw;
   }
@@ -54,6 +54,5 @@ a[href] {
 }
 #bottom-note{
   font-style:italic;
-  font-size: 15px;
   font-weight:100;
 }
