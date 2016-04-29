@@ -49,9 +49,9 @@ while (queue.length &gt; 0) {
   if (node.right) { queue.push(node.right); }
 }
 </code></pre>
-<p>Down in the guts of this tree-traversal algorithm, there&#39;s a point where we have the value in-hand. But since iteration is a pull model where the consumer is in charge, we can&#39;t just let the loop run to completion. We have to hand off the value, then suspend the loop mid-flight and wait... somehow.</p>
+<p>Down in the guts of this tree-traversal algorithm, there&#39;s a point where we have the value in-hand. But since iteration is a pull model where the consumer decides when to access each value, we can&#39;t just let the loop run to completion. We have to hand off a value, then suspend the loop mid-flight and wait... somehow.</p>
 <h2 id="the-solution">The solution</h2>
-<p>It turns out that <em>suspending and waiting</em> is exactly what generators do! The mechanics of this are discussed in more detail below, but let&#39;s just jump right to the solution, in which we declare <code>[Symbol.iterator]</code> as a generator by adding an asterisk <code>*</code>, drop our algorithm in wholesale, then hand off the value using <code>yield</code>.</p>
+<p>It turns out that <em>suspending and waiting</em> is exactly what generators do. The mechanics of this are discussed in more detail below, but let&#39;s just jump right to the solution, in which we declare <code>[Symbol.iterator]</code> as a generator by adding an asterisk <code>*</code>, drop our algorithm in wholesale, then hand off the value using <code>yield</code>.</p>
 <pre><code class="lang-js">class Tree {
   // ...
   *[Symbol.iterator]() {
@@ -70,7 +70,7 @@ for (const value of tree) {
   visit(value); // &lt;-- consume
 }
 </code></pre>
-<p>And because a generator returns an iterator, we&#39;ve satisfied both the iterable and iterator protocols in one fell swoop.</p>
+<p>And because a generator returns an iterator, we&#39;ve satisfied the iterable protocol.</p>
 <h2 id="okay-but-how-do-generators-work-">Okay, but <em>how</em> do generators work?</h2>
 <p>Essentially, what happens is that when the <code>*[Symbol.iterator]</code> generator function is called, instead of running our algorithm to completion, JavaScript puts it into a <em>paused</em> state, without running it.</p>
 <p>Meanwhile, JavaScript returns an iterator &quot;<code>itr</code>&quot; to the caller. When <code>itr.next()</code> is called, JavaScript presses <em>play</em> on the algorithm, which runs right up until the point it encounters a <code>yield</code>, then pauses again. The yielded value is subsequently returned from <code>itr.next()</code> along with <code>done: false</code>.</p>
@@ -78,25 +78,6 @@ for (const value of tree) {
 </code></pre>
 <p>This happens anywhere between zero and infinity times. If/when the generator algorithm hits a <code>return</code> instead of a <code>yield</code> (the return can be either implicit or explicit) the returned value is returned from <code>itr.next()</code> along with <code>done: true</code>.</p>
 <pre><code class="lang-js">{ value: /* whatever was returned */, done: true }
-</code></pre>
-<h2 id="generator-function-syntax">Generator function syntax</h2>
-<p>You have the full power of JavaScript syntax available to you inside a generator. <code>yield x</code> sends <code>x</code> out to the consumer. <code>yield</code> (with nothing after it) sends <code>undefined</code>. Furthermore, <code>yield x</code> can go anywhere an expression is expected.</p>
-<pre><code class="lang-js">var greeting = `Hello ${yield 4}`;
-</code></pre>
-<p>Each way of making a function has a variant which turns that function into a generator.</p>
-<h3 id="function-declarations-and-expressions">Function declarations and expressions</h3>
-<pre><code class="lang-js">function* doStuff() { ... }
-var doStuff = function*() { ... }
-var doStuff = function* doStuff() { ... }
-var obj = { doStuff: function*() { ... } }
-</code></pre>
-<h3 id="object-literal-shorthand">Object literal shorthand</h3>
-<pre><code class="lang-js">var obj = { *doStuff() { ... } }
-var obj = { *[someExpression]() { ... } }
-</code></pre>
-<h3 id="class-method">Class method</h3>
-<pre><code class="lang-js">class Foo { *doStuff() { ... } }
-class Foo { *[someExpression]() { ... } }
 </code></pre>
 <hr>
 <ul>

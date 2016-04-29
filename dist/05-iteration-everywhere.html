@@ -26,12 +26,12 @@
 <h2 id="what-else-can-iterators-do-">What else can iterators do?</h2>
 <p>The power of iteration is the power of generators, and vice versa. Thus, even though this is a tutorial about generators, we continue exploring iteration. The fact is, for/of isn&#39;t the only place where ES6 natively supports iteration. Here are a few others.</p>
 <h3 id="spread-operators">Spread operators</h3>
-<pre><code class="lang-js">function* foo() { yield 1, yield 2, yield 3; }
+<pre><code class="lang-js">function* foo() { yield &#39;a&#39;, yield &#39;b&#39;, yield &#39;c&#39;; }
 function bar() { console.log(arguments); }
-bar(...foo()); // =&gt; { 0: 1, 1: 2, 2: 3 }
+bar(...foo()); // =&gt; { 0: &#39;a&#39;, 1: &#39;b&#39;, 2: &#39;c&#39; }
 </code></pre>
 <pre><code class="lang-js">function* foo() { yield 1, yield 2, yield 3; }
-console.log([...foo()]); // =&gt; [ 1, 2, 3 ]
+console.log([...foo()]); // =&gt; [ &#39;a&#39;, &#39;b&#39;, &#39;c&#39; ]
 </code></pre>
 <h3 id="destructuring">Destructuring</h3>
 <pre><code class="lang-js">function* foo() { yield 1, yield 2, yield 3; }

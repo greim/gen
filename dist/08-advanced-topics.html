@@ -32,25 +32,6 @@ for (const val of collection) {
   collection.remove(val);
 }
 </code></pre>
-<h2 id="for-of-has-more-tricks-up-its-sleeve">For/of has more tricks up its sleeve</h2>
-<p>For/of has a crazy ability that I totally wouldn&#39;t have expected: the value can be auto-assigned as a property on an object:</p>
-<pre><code class="lang-js">var iterable = [ 1, 2 ];
-var obj = {};
-for (obj.x of iterable) {
-  console.log(JSON.stringify(obj));
-}
-// {&quot;x&quot;:1}
-// {&quot;x&quot;:2}
-</code></pre>
-<p>...or an index on an array:</p>
-<pre><code class="lang-js">var iterable = [ &#39;earth&#39;, &#39;mars&#39; ];
-var arr = [&#39;hello&#39;];
-for (arr[1] of iterable) {
-  console.log(JSON.stringify(arr));
-}
-// [&quot;hello&quot;,&quot;earth&quot;]
-// [&quot;hello&quot;,&quot;mars&quot;]
-</code></pre>
 <h2 id="functional-programming-over-sequences">Functional programming over sequences</h2>
 <p>Considering that iteration introduces a conceptual shift from <em>collections</em> to <em>abstract sequences</em>, collection-oriented libraries like lodash start to seem incomplete. Operations like map, filter, and reduce can just as easily operate on infinite or lazy sequences, for example. The <a href="https://fitzgen.github.io/wu.js/">wu library</a> offers these kinds of capabilities, and can be thought of as &quot;lodash for iterators&quot;:</p>
 <pre><code class="lang-js">const evenSquares = wu(range(0, Infinity))

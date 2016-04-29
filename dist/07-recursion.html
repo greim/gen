@@ -34,7 +34,7 @@ while (queue.length &gt; 0) {
   if (node.right) { queue.push(node.right); }
 }
 </code></pre>
-<p>This technique works, but ignores the innate sorting properties of binary search trees. To fix this, we want to switch to <a href="https://en.wikipedia.org/wiki/Tree_traversal#In-order">in-order iteration</a>. The easiest way to do that is to use recursion, which means our generator will have to call itself.</p>
+<p>This technique works, but ignores the innate sorting properties of binary search trees. To fix this, we want to switch to <a href="https://en.wikipedia.org/wiki/Tree_traversal#In-order">in-order iteration</a>. An easy way to do that is to use recursion, which means our generator will have to call itself.</p>
 <p>The way our tree works is that we have a <code>Tree</code> class and an inner <code>Node</code> class. Instances of <code>Tree</code> have a root which is undefined if the tree is empty. Otherwise, it&#39;s an instance of <code>Node</code>, which in turn can have left and right children, themselves instances of <code>Node</code>, and so on.</p>
 <pre><code>tree (Tree)
 └──root (Node)
@@ -51,11 +51,12 @@ while (queue.length &gt; 0) {
       ├──left (undefined)
       └──right (undefined)
 </code></pre><h2 id="adding-recursion-to-a-generator-attempt-one">Adding recursion to a generator: attempt one</h2>
-<p>We&#39;ll make both <code>Tree</code> and <code>Node</code> iterable, and have <code>Tree</code> delegate to its root <code>Node</code>, if it exists. Then the root will recursively delegate to its left and right children, if they exist, etc. How do we perform the delegation? Let&#39;s try using a loop:</p>
+<p>We&#39;ll make both <code>Tree</code> and <code>Node</code> iterable, and have <code>Tree</code> delegate to its root <code>Node</code>, if it exists. Then the root will recursively delegate to its left and right children, if they exist, etc.</p>
 <pre><code class="lang-js">class Tree {
   // ...
   *[Symbol.iterator]() {
     if (this.root) {
+      // delegate to root
       for (const val of this.root) {
         yield val;
       }
@@ -67,12 +68,14 @@ class Node {
   // ...
   *[Symbol.iterator]() {
     if (this.left) {
+      // delegate to this.left
       for (const val of this.left) {
         yield val;
       }
     }
     yield this.value;
     if (this.right) {
+      // delegate to this.right
       for (const val of this.right) {
         yield val;
       }
