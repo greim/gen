@@ -32,11 +32,11 @@ while (queue.length > 0) {
 }
 ```
 
-Down in the guts of this tree-traversal algorithm, there's a point where we have the value in-hand. But since iteration is a pull model where the consumer is in charge, we can't just let the loop run to completion. We have to hand off the value, then suspend the loop mid-flight and wait... somehow.
+Down in the guts of this tree-traversal algorithm, there's a point where we have the value in-hand. But since iteration is a pull model where the consumer decides when to access each value, we can't just let the loop run to completion. We have to hand off a value, then suspend the loop mid-flight and wait... somehow.
 
 ## The solution
 
-It turns out that *suspending and waiting* is exactly what generators do! The mechanics of this are discussed in more detail below, but let's just jump right to the solution, in which we declare `[Symbol.iterator]` as a generator by adding an asterisk `*`, drop our algorithm in wholesale, then hand off the value using `yield`.
+It turns out that *suspending and waiting* is exactly what generators do. The mechanics of this are discussed in more detail below, but let's just jump right to the solution, in which we declare `[Symbol.iterator]` as a generator by adding an asterisk `*`, drop our algorithm in wholesale, then hand off the value using `yield`.
 
 ```js
 class Tree {
@@ -58,7 +58,7 @@ for (const value of tree) {
 }
 ```
 
-And because a generator returns an iterator, we've satisfied both the iterable and iterator protocols in one fell swoop.
+And because a generator returns an iterator, we've satisfied the iterable protocol.
 
 ## Okay, but *how* do generators work?
 
@@ -74,39 +74,6 @@ This happens anywhere between zero and infinity times. If/when the generator alg
 
 ```js
 { value: /* whatever was returned */, done: true }
-```
-
-## Generator function syntax
-
-You have the full power of JavaScript syntax available to you inside a generator. `yield x` sends `x` out to the consumer. `yield` (with nothing after it) sends `undefined`. Furthermore, `yield x` can go anywhere an expression is expected.
-
-```js
-var greeting = `Hello ${yield 4}`;
-```
-
-Each way of making a function has a variant which turns that function into a generator.
-
-### Function declarations and expressions
-
-```js
-function* doStuff() { ... }
-var doStuff = function*() { ... }
-var doStuff = function* doStuff() { ... }
-var obj = { doStuff: function*() { ... } }
-```
-
-### Object literal shorthand
-
-```js
-var obj = { *doStuff() { ... } }
-var obj = { *[someExpression]() { ... } }
-```
-
-### Class method
-
-```js
-class Foo { *doStuff() { ... } }
-class Foo { *[someExpression]() { ... } }
 ```
 
 ----------------

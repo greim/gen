@@ -9,14 +9,14 @@ The power of iteration is the power of generators, and vice versa. Thus, even th
 ### Spread operators
 
 ```js
-function* foo() { yield 1, yield 2, yield 3; }
+function* foo() { yield 'a', yield 'b', yield 'c'; }
 function bar() { console.log(arguments); }
-bar(...foo()); // => { 0: 1, 1: 2, 2: 3 }
+bar(...foo()); // => { 0: 'a', 1: 'b', 2: 'c' }
 ```
 
 ```js
 function* foo() { yield 1, yield 2, yield 3; }
-console.log([...foo()]); // => [ 1, 2, 3 ]
+console.log([...foo()]); // => [ 'a', 'b', 'c' ]
 ```
 
 ### Destructuring

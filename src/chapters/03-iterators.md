@@ -4,7 +4,7 @@
 
 ## Introducing *iteration*
 
-In the previous chapter, we learned how the for/of loop retains the powers of the pull model, while gaining the powers of the push model. But to understand *why* this is the case, we have to look at iterators.
+In the previous chapter, we learned how the for/of loop retains the powers of the pull model, while gaining powers of the push model. But to understand *why* this is the case, we have to look at iterators.
 
 Here's a brief tour of the concepts involved. Take a look, and be sure to bookmark this spot for later as we dive into examples.
 
@@ -26,7 +26,7 @@ To implement the iterator protocol, an object must have a `next` method that can
 
 ## Iteration protocols in action
 
-To illustrate, let's create an iterator from an array and then deplete it by invoking the protocols manually. We'll use an array, since we know arrays are iterable:
+To illustrate, let's create an iterator from an array and then deplete it by invoking the protocols manually. In order to demonstrate that this is possible *today* with modern JavaScript, we'll use an plain old array (which, if you remember, is an iterable):
 
 ```js
 // create the iterable
@@ -68,7 +68,7 @@ for (var n of array) {
 
 Iterators bring some theoretical goodness to the table.
 
- * **Separation of concerns**: In pre-ES6 pull/push scenarios, either the consumer or producer was fully in charge. With iterators, responsibility is more evenly split. The consumer is in charge of deciding if and when to pull out the next thing, while the producer is in charge of how to provide the thing. This is a better separation of concerns, and sets the state for everything that follows.
+ * **Separation of concerns**: In pre-ES6 pull/push scenarios, either the consumer or producer was fully responsible to handle all the messy details. With iterators, responsibility is more evenly split. The consumer is in charge of deciding if and when to pull out the next thing, while the producer is in charge of how to provide the thing. This is a better separation of concerns, and sets the state for everything that follows.
  * **Abstract sequences**: So far we've only looked at iterators as a way of looping a collection, but this is too conceptually narrow. Iterators go beyond collections, and even beyond for/of loops. Think of them as a general-purpose way to represent any *abstract sequence*.
  * **Infinite sequences**: The ability to represent any abstract sequence means that iterators can represent *infinite or really long sequences*. It's up to the consumer to decide how much of that sequence to consume before bailing out of the for/of loop.
  * **Lazy sequences**: A lazy sequence doesn't generate a value until the moment the consumer asks for it. This saves both memory and CPU cycles, especially in cases where consumers might bail out of loop before exhausting the sequence. And of course infinite sequences are only possible *because* they're lazy.
@@ -78,13 +78,16 @@ Iterators bring some theoretical goodness to the table.
 Armed with all of this amazing theoretical machinery, let's try to implement the iterable protocol and make a `range()` function:
 
 ```js
-// implementation
 function range(from, to) {
   return {
-    [Symbol.iterator]: function() { // <-- implementing iterable
+
+    // implement iterable
+    [Symbol.iterator]: function() {
       var i = from;
       return {
-        next: function() { // <-- implementing iterator
+
+        // implement iterator
+        next: function() {
           var value = i++;
           var done = value >= to;
           return { value, done };
@@ -103,9 +106,9 @@ for (var n of range(3, 5)) {
 // => 5
 ```
 
-Ugh, that was tedious to type out, and it's even more tedious to read. I'd probably avoid making iterators if it required doing this sort of thing regularly. But all of that aside, it works.
+Ugh, that was tedious to type out, and it's even more tedious to read. I'd probably avoid making iterators if it required doing this sort of thing regularly. But all of that aside, it works!
 
-Note that it's is a *lazy sequence*: at no point do we retain the whole range in memory. Calling `range(0, Infinity)` is fine, as long as we don't try to exhaust the sequence!
+Note that it's is a *lazy sequence*; at no point do we retain the whole range in memory. Calling `range(0, Infinity)` is trivial, performance-wise, as long as we don't try to exhaust the sequence!
 
 ## Example 2: binary search tree iteration
 
