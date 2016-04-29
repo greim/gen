@@ -37,7 +37,7 @@ In other words, for/of retains the benefits of the pull model, while also gainin
 
 ## Lots of things are for/of-able
 
-There's more good news: arrays are just one of many things in ES6 can be for/of'd. Other things you can for/of include, but aren't limited to:
+There's more good news: arrays are just one of many things in ES6 can be for/of'd. Other things you can for/of include:
 
  * key/value entries in a `Map`.
  * items in a `Set`.

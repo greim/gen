@@ -17,32 +17,6 @@ for (const val of collection) {
 }
 ```
 
-## For/of has more tricks up its sleeve
-
-For/of has a crazy ability that I totally wouldn't have expected: the value can be auto-assigned as a property on an object:
-
-```js
-var iterable = [ 1, 2 ];
-var obj = {};
-for (obj.x of iterable) {
-  console.log(JSON.stringify(obj));
-}
-// {"x":1}
-// {"x":2}
-```
-
-...or an index on an array:
-
-```js
-var iterable = [ 'earth', 'mars' ];
-var arr = ['hello'];
-for (arr[1] of iterable) {
-  console.log(JSON.stringify(arr));
-}
-// ["hello","earth"]
-// ["hello","mars"]
-```
-
 ## Functional programming over sequences
 
 Considering that iteration introduces a conceptual shift from *collections* to *abstract sequences*, collection-oriented libraries like lodash start to seem incomplete. Operations like map, filter, and reduce can just as easily operate on infinite or lazy sequences, for example. The [wu library](https://fitzgen.github.io/wu.js/) offers these kinds of capabilities, and can be thought of as "lodash for iterators":

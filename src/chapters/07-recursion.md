@@ -17,7 +17,7 @@ while (queue.length > 0) {
 }
 ```
 
-This technique works, but ignores the innate sorting properties of binary search trees. To fix this, we want to switch to [in-order iteration](https://en.wikipedia.org/wiki/Tree_traversal#In-order). The easiest way to do that is to use recursion, which means our generator will have to call itself.
+This technique works, but ignores the innate sorting properties of binary search trees. To fix this, we want to switch to [in-order iteration](https://en.wikipedia.org/wiki/Tree_traversal#In-order). An easy way to do that is to use recursion, which means our generator will have to call itself.
 
 The way our tree works is that we have a `Tree` class and an inner `Node` class. Instances of `Tree` have a root which is undefined if the tree is empty. Otherwise, it's an instance of `Node`, which in turn can have left and right children, themselves instances of `Node`, and so on.
 
@@ -40,13 +40,14 @@ tree (Tree)
 
 ## Adding recursion to a generator: attempt one
 
-We'll make both `Tree` and `Node` iterable, and have `Tree` delegate to its root `Node`, if it exists. Then the root will recursively delegate to its left and right children, if they exist, etc. How do we perform the delegation? Let's try using a loop:
+We'll make both `Tree` and `Node` iterable, and have `Tree` delegate to its root `Node`, if it exists. Then the root will recursively delegate to its left and right children, if they exist, etc.
 
 ```js
 class Tree {
   // ...
   *[Symbol.iterator]() {
     if (this.root) {
+      // delegate to root
       for (const val of this.root) {
         yield val;
       }
@@ -58,12 +59,14 @@ class Node {
   // ...
   *[Symbol.iterator]() {
     if (this.left) {
+      // delegate to this.left
       for (const val of this.left) {
         yield val;
       }
     }
     yield this.value;
     if (this.right) {
+      // delegate to this.right
       for (const val of this.right) {
         yield val;
       }
