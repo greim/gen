@@ -23,7 +23,7 @@ setSize();
 <h1 id="chapter-ii-the-for-of-loop">Chapter II: The for/of loop</h1>
 <ul>
 <li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
-<li><a href="./01-pull-push.html">Chapter I: Pull vs. push</a></li>
+<li><a href="./01-pull-push.html">Chapter I: The pull/push conundrum</a></li>
 <li><strong>Chapter II: The for/of loop</strong></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
@@ -33,7 +33,7 @@ setSize();
 <li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
 <h2 id="a-new-twist">A new twist</h2>
-<p>In the first chapter, we learned about tradeoffs between the <em>pull</em> and <em>push</em> models for consuming collections. However, ES6 introduces a new twist on the pull model that we didn&#39;t take into account before: the for/of loop.</p>
+<p>In the first chapter, we learned about tradeoffs between the <em>pull</em> and <em>push</em> models for consuming collections. However, ES6 introduces a new twist on the pull model that we failed to take into account: the for/of loop.</p>
 <h2 id="yay-for-of-loops-">Yay for/of loops!</h2>
 <p>Compare these two ways of looping an array:</p>
 <pre><code class="lang-js">for (var i=0; i&lt;arr.length; i++) {
@@ -67,11 +67,11 @@ for (var value of arr) {
 <li>args in an <code>arguments</code> object.</li>
 <li>DOM elements gotten from <code>document.querySelectorAll()</code> or <code>elmt.getElementsByClassName()</code>.</li>
 </ul>
-<p>This raises the question: what makes something for/of-able? Are only built-in objects for/of-able, or could our binary search tree from the last chapter also be looped using for/of? That&#39;s where ES6 iterators come in, and it&#39;s the topic of the next chapter.</p>
+<p>Okay so for/of is rad and we like it. But this raises the question: what makes something for/of-able? Are only built-in objects for/of-able, or could our binary search tree from the last chapter also be looped using for/of? That&#39;s where ES6 iterators come in, and it&#39;s the topic of the next chapter.</p>
 <hr>
 <ul>
 <li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
-<li><a href="./01-pull-push.html">Chapter I: Pull vs. push</a></li>
+<li><a href="./01-pull-push.html">Chapter I: The pull/push conundrum</a></li>
 <li><strong>Chapter II: The for/of loop</strong></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>

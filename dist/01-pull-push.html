@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chapter I: Pull vs. push</title>
+<title>Chapter I: The pull/push conundrum</title>
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
 <link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300' rel='stylesheet' type='text/css'>
@@ -20,10 +20,10 @@ setSize();
 </head>
 <body>
 <div id="wrapper">
-<h1 id="chapter-i-pull-vs-push">Chapter I: Pull vs. push</h1>
+<h1 id="chapter-i-the-pull-push-conundrum">Chapter I: The pull/push conundrum</h1>
 <ul>
 <li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
-<li><strong>Chapter I: Pull vs. push</strong></li>
+<li><strong>Chapter I: The pull/push conundrum</strong></li>
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
@@ -33,25 +33,19 @@ setSize();
 <li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
 <h2 id="looping-collections">Looping collections</h2>
-<p>We&#39;ll kick things off by looking at <em>collections</em>, which is a generic term for a thing that contains things. Some examples:</p>
+<p>We&#39;ll kick things off by looking at <em>collections</em>, which are things that you might want to <em>loop</em>. Some examples:</p>
 <ul>
 <li><strong>Lists</strong>: In a list, everything exists sequentially in a line, so looping is easy.</li>
 <li><strong>Trees</strong>: A tree has a non-linear branching structure, so looping it isn&#39;t so easy.</li>
 </ul>
 <p>Terminology note: when you loop through a collection, we&#39;ll say that you&#39;re the <em>consumer</em>, while the collection is the <em>producer</em>.</p>
 <h2 id="the-pull-model">The pull model</h2>
-<p>Suppose we have a <code>list</code> and a <code>tree</code> variable. We&#39;ll consume these collections by <em>pulling</em> elements out sequentially. In the pull model, the consumer decides when to pull each successive thing out:</p>
+<p>Suppose we have a <code>list</code> and a <code>tree</code> variable. We&#39;ll consume these collections by <em>pulling</em> elements out sequentially. In the pull model, the consumer is in charge of deciding when to pull things out:</p>
 <pre><code class="lang-js">for (var i=0; i&lt;list.length; i++) {
   visit(list[i]);
 }
 </code></pre>
-<p>Consuming the tree is harder, since how do you loop a non-linear thing? Let&#39;s assume it&#39;s a <a href="https://en.wikipedia.org/wiki/Binary_search_tree">binary search tree</a>, where every node has the following:</p>
-<ul>
-<li>A <code>value</code></li>
-<li>An optional <code>left</code> child node</li>
-<li>An optional <code>right</code> child node</li>
-</ul>
-<p>A bit of googling turns up an algorithm we can use to &quot;loop&quot; it:</p>
+<p>Consuming the tree is harder, since how do you loop a non-linear thing? Let&#39;s assume it&#39;s a <a href="https://en.wikipedia.org/wiki/Binary_search_tree">binary search tree</a>. A bit of googling turns up an algorithm we can use to &quot;loop&quot; it:</p>
 <pre><code class="lang-js">var queue = tree.root ? [tree.root] : [];
 while (queue.length &gt; 0) {
   var node = queue.shift();
@@ -60,9 +54,9 @@ while (queue.length &gt; 0) {
   if (node.right) { queue.push(node.right); }
 }
 </code></pre>
-<p>At least for me, it&#39;s annoying to have to memorize and type out this this pile of code every time I want to loop a tree, but since this is the pull model and I&#39;m in charge, it falls to me to handle all this stuff.</p>
+<p>At least for me, it&#39;s annoying to have to memorize and type out this this pile of code every time I want to loop a tree, but I have to since this is the pull model and I&#39;m in charge.</p>
 <h2 id="the-push-model">The push model</h2>
-<p>If you&#39;re at all familiar with JavaScript, the above examples likely seem unsatisfactory. Let&#39;s switch to the <em>push</em> model, in which the <em>producer</em> is in charge of when the consumer gets each successive thing. It does this by providing an <code>each()</code> method that accepts a callback, which it uses to push values back at us. Let&#39;s assume both our list and our tree have such a method. Suddenly everything&#39;s a lot easier:</p>
+<p>If you&#39;re familiar with JavaScript, the above examples likely seem unsatisfactory. Let&#39;s switch to the <em>push</em> model, in which the <em>producer</em> takes charge. It does this by providing an <code>each()</code> method that accepts a callback, which it uses to push values back at us. Let&#39;s assume both our list and our tree have such a method. Suddenly everything&#39;s a lot easier:</p>
 <pre><code class="lang-js">list.each(elmt =&gt; visit(elmt));
 tree.each(elmt =&gt; visit(elmt));
 </code></pre>
@@ -78,7 +72,7 @@ tree.each(elmt =&gt; visit(elmt));
 <hr>
 <ul>
 <li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
-<li><strong>Chapter I: Pull vs. push</strong></li>
+<li><strong>Chapter I: The pull/push conundrum</strong></li>
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
