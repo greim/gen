@@ -2,15 +2,32 @@
 
 {{ toc }}
 
-## Introducing *iteration*
+## Introducing *iterators*
 
 In the previous chapter, we learned how the for/of loop retains the powers of the pull model, while gaining powers of the push model. But to understand *why* this is the case, we have to look at iterators.
 
-Here's a brief tour of the concepts involved. Take a look, and be sure to bookmark this spot for later as we dive into examples.
+## A theory of abstract sequences
+
+Fundamentally, iterators are an abstract representation of *sequences*. Before ES6 came along, it was common to use arrays as the go-to model for a sequence, but this ends up being unworkable in at least two cases:
+
+ 1. **Infinite sequences**: Sometimes it's useful to model *infinite or ridiculously long sequences*, for example, the set of all positive integers. Certainly you wouldn't ever try to exhaust such a sequence, but open-ended systems nevertheless have their uses.
+ 2. **Lazy sequences**: A lazy sequence doesn't have a value until the moment the consumer asks for it, which saves both memory and CPU cycles, especially in cases when only part the sequence is consumed.
+
+Iterators are easily capable of modeling both scenarios.
+
+## Separation of concerns
+
+Iterators are able to represent abstract sequences by implementing proper *separation of concerns*. In pre-ES6 pull/push scenarios, recall that either the consumer or the producer was fully in charge. With iterators, responsibility is split. The consumer is in charge of deciding if and when to pull out the next thing, while the producer is in charge of how to provide the thing.
+
+This frees you up to model a sequence however you see fit.
+
+## How do iterators work?
+
+Having looked at the theory behind iterators, let's dive into how they work. Here's an overview of the concepts involved.
 
 ## Concept: Iterables
 
-An *iterable* is any object that implements the *iterable protocol*. Any iterable can be for/of'd. Lots of things you encounter on a daily basis are iterable, such as arrays and strings.
+An *iterable* is any object that implements the *iterable protocol*. Among other things, any iterable can be for/of'd. Lots of things you encounter on a daily basis are iterable, such as arrays and strings.
 
 ## Concept: The iterable protocol
 
@@ -18,7 +35,7 @@ To implement the iterable protocol, an object must have a `[Symbol.iterator]` pr
 
 ## Concept: Iterators
 
-An *iterator* is any object that implements the *iterator protocol*. Notice that "iterable" and "iterator" are separate terms with separate meanings. This is important! An iterator is a temporary, stateful object, created by an iterable, which is used to consume a sequence once, and then thrown away. In other words, every time you loop an iterable, a new iterator is created.
+An *iterator* is any object that implements the *iterator protocol*. Notice that "iterable" and "iterator" are separate terms with separate meanings! An iterator is an object created by an iterable which is used to consume a sequence once. It's *stateful* in the sense that it remembers its current position in the sequence. It's *transient* in the sense that every time you loop an iterable, a separate iterator is created and then discarded at the end.
 
 ## Concept: The iterator protocol
 
@@ -26,10 +43,10 @@ To implement the iterator protocol, an object must have a `next` method that can
 
 ## Iteration protocols in action
 
-To illustrate, let's create an iterator from an array and then deplete it by invoking the protocols manually. In order to demonstrate that this is possible *today* with modern JavaScript, we'll use an plain old array (which, if you remember, is an iterable):
+Now that we've talked about the iterable and iterator protocols, let's see how they work. We'll create an iterator from an array and then deplete it. (If you're using a modern browser, feel free to paste this code in your console and try it out.)
 
 ```js
-// create the iterable
+// this is our iterable
 var array = [ 2, 4, 6 ];
 
 // create an iterator
@@ -64,55 +81,49 @@ for (var n of array) {
 }
 ```
 
-## Iterators are conceptually yummy
-
-Iterators bring some theoretical goodness to the table.
-
- * **Separation of concerns**: In pre-ES6 pull/push scenarios, either the consumer or producer was fully responsible to handle all the messy details. With iterators, responsibility is more evenly split. The consumer is in charge of deciding if and when to pull out the next thing, while the producer is in charge of how to provide the thing. This is a better separation of concerns, and sets the state for everything that follows.
- * **Abstract sequences**: So far we've only looked at iterators as a way of looping a collection, but this is too conceptually narrow. Iterators go beyond collections, and even beyond for/of loops. Think of them as a general-purpose way to represent any *abstract sequence*.
- * **Infinite sequences**: The ability to represent any abstract sequence means that iterators can represent *infinite or really long sequences*. It's up to the consumer to decide how much of that sequence to consume before bailing out of the for/of loop.
- * **Lazy sequences**: A lazy sequence doesn't generate a value until the moment the consumer asks for it. This saves both memory and CPU cycles, especially in cases where consumers might bail out of loop before exhausting the sequence. And of course infinite sequences are only possible *because* they're lazy.
-
 ## Example 1: a range() function
 
-Armed with all of this amazing theoretical machinery, let's try to implement the iterable protocol and make a `range()` function:
+Next, let's try to implement the iterable protocol on our own object. We'll have a `range()` function that represents a sequence of numbers from X to Y. Our goal is to be able to do this:
+
+```js
+for (var n of range(3, 5)) { ... }
+```
+
+Here's the code:
 
 ```js
 function range(from, to) {
-  return {
-
-    // implement iterable
-    [Symbol.iterator]: function() {
-      var i = from;
-      return {
-
-        // implement iterator
-        next: function() {
-          var value = i++;
-          var done = value >= to;
-          return { value, done };
-        }
-      }
-    }
+  var iterable = {};
+  // implement iterable protocol
+  iterable[Symbol.iterator] = function() {
+    var i = from;
+    var iterator = {};
+    // implement iterator protocol
+    iterator.next = function() {
+      var value = i++;
+      var done = to > value;
+      if (done) value = undefined;
+      return { value, done };
+    };
+    return iterator;
   };
+  return iterable;
 }
-
-// usage
-for (var n of range(3, 5)) {
-  console.log(n);
-}
-// => 3
-// => 4
-// => 5
 ```
 
 Ugh, that was tedious to type out, and it's even more tedious to read. I'd probably avoid making iterators if it required doing this sort of thing regularly. But all of that aside, it works!
 
-Note that it's is a *lazy sequence*; at no point do we retain the whole range in memory. Calling `range(0, Infinity)` is trivial, performance-wise, as long as we don't try to exhaust the sequence!
+Note that it's is a *lazy sequence*; at no point do we retain the whole range in memory. Calling `range(0, Infinity)` is fine, performance-wise, as long as we don't try to exhaust the sequence!
 
 ## Example 2: binary search tree iteration
 
-Flushed with success, let's try implementing iterable on our binary search tree from the first chapter. Here's all the ingredients laid out for us, we merely need to assemble them together, somehow:
+Flushed with success, let's try implementing iterable on our binary search tree from the first chapter. Our end goal is to be able to do this:
+
+```js
+for (var val of tree) { ... }
+```
+
+Here's all the ingredients laid out for us, we merely need to assemble them together, somehow:
 
 ```js
 class Tree {

@@ -4,7 +4,7 @@
 
 ## A new twist
 
-In the first chapter, we learned about tradeoffs between the *pull* and *push* models for consuming collections. However, ES6 introduces a new twist on the pull model that we didn't take into account before: the for/of loop.
+In the first chapter, we learned about tradeoffs between the *pull* and *push* models for consuming collections. However, ES6 introduces a new twist on the pull model that we failed to take into account: the for/of loop.
 
 ## Yay for/of loops!
 
@@ -45,7 +45,7 @@ There's more good news: arrays are just one of many things in ES6 can be for/of'
  * args in an `arguments` object.
  * DOM elements gotten from `document.querySelectorAll()` or `elmt.getElementsByClassName()`.
 
-This raises the question: what makes something for/of-able? Are only built-in objects for/of-able, or could our binary search tree from the last chapter also be looped using for/of? That's where ES6 iterators come in, and it's the topic of the next chapter.
+Okay so for/of is rad and we like it. But this raises the question: what makes something for/of-able? Are only built-in objects for/of-able, or could our binary search tree from the last chapter also be looped using for/of? That's where ES6 iterators come in, and it's the topic of the next chapter.
 
 ----------------
 
