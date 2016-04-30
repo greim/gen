@@ -8,18 +8,18 @@ In the previous chapter, we learned how the for/of loop retains the powers of th
 
 ## A theory of abstract sequences
 
-Fundamentally, iterators are an abstract representation of *sequences*. Before ES6 came along, it was common to use arrays as the go-to model for a sequence, but this ends up being unworkable in at least two cases:
+Fundamentally, iterators give you the ability to abstractly represent any *sequence*. Before ES6 came along, it was common to use arrays for this, but that ends up being unworkable in at least two cases:
 
  1. **Infinite sequences**: Sometimes it's useful to model *infinite or ridiculously long sequences*, for example, the set of all positive integers. Certainly you wouldn't ever try to exhaust such a sequence, but open-ended systems nevertheless have their uses.
  2. **Lazy sequences**: A lazy sequence doesn't have a value until the moment the consumer asks for it, which saves both memory and CPU cycles, especially in cases when only part the sequence is consumed.
 
-Iterators are easily capable of modeling both scenarios.
+Unlike arrays, iterators are easily capable of modeling both scenarios.
 
 ## Separation of concerns
 
-Iterators are able to represent abstract sequences by implementing proper *separation of concerns*. In pre-ES6 pull/push scenarios, recall that either the consumer or the producer was fully in charge. With iterators, responsibility is split. The consumer is in charge of deciding if and when to pull out the next thing, while the producer is in charge of how to provide the thing.
+Iterators are able to do this by implementing proper *separation of concerns*. In pre-ES6 pull/push scenarios, recall that all responsibility was placed onto either the consumer or the producer. With iterators, responsibility is split. The consumer is in charge of deciding *if and when* to pull out the next thing, while the producer is in charge of *how* to provide the thing.
 
-This frees you up to model a sequence however you see fit.
+This frees you up to model a sequence however you see fit, whether it be an array, a binary tree or some other data structure, or a state machine that generates a lazy or unbounded sequence.
 
 ## How do iterators work?
 
