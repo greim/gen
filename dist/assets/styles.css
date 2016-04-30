@@ -7,7 +7,7 @@ body {
   font-size: 2.8em;
   background:#ccc;
 }
-ul {
+ul, ol {
   padding: 0;
   margin: 1em 5em 1em 3em;
 }
