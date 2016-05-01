@@ -52,7 +52,7 @@ So the push model wins, right? Sadly, in the process of switching from pull to p
 
  * We can't `return` the outer function from inside a callback.
  * We can't `break` or `continue` from inside a callback.
- * We can't `yield` or `await` from within a callback.
+ * We can't `yield` from within a callback.
 
 Those behaviors could be simulated using some sort of pre-agreed-upon signaling mechanism between the callback and its runner, but by then we've begun to re-invent the wheel, since the language gives us those capabilities for free with loops.
 

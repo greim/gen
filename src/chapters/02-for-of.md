@@ -25,7 +25,7 @@ Unlike what we saw in the push model, for/of retains all the language-level powe
 
  * You can `return` the outer function from inside the loop body.
  * You can `break` or `continue` iteration from inside the loop body.
- * You can `yield` or `await` from inside the loop body.
+ * You can `yield` from inside the loop body.
 
 Also note the ways for/of differs from other loops:
 
