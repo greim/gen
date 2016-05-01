@@ -27,39 +27,39 @@ setSize();
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><strong>Chapter III: Iterators</strong></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
-<li><a href="./05-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
-<li><a href="./06-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./05-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./06-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
 <li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
 <li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
 <h2 id="introducing-iterators-">Introducing <em>iterators</em></h2>
 <p>In the previous chapter, we learned how the for/of loop retains the powers of the pull model, while gaining powers of the push model. But to understand <em>why</em> this is the case, we have to look at iterators.</p>
 <h2 id="a-theory-of-abstract-sequences">A theory of abstract sequences</h2>
-<p>Fundamentally, iterators give you the ability to abstractly represent any <em>sequence</em>. Before ES6 came along, it was common to use arrays for this, but that ends up being unworkable in at least two cases:</p>
+<p>Fundamentally, iterators are an abstract way to represent any <em>sequence</em>. Before ES6 came along, it was common to use arrays for this, but that ends up being unworkable in at least two cases:</p>
 <ol>
-<li><strong>Infinite sequences</strong>: Sometimes it&#39;s useful to model <em>infinite or ridiculously long sequences</em>, for example, the set of all positive integers. Certainly you wouldn&#39;t ever try to exhaust such a sequence, but open-ended systems nevertheless have their uses.</li>
-<li><strong>Lazy sequences</strong>: A lazy sequence doesn&#39;t have a value until the moment the consumer asks for it, which saves both memory and CPU cycles, especially in cases when only part the sequence is consumed.</li>
+<li><strong>Open-ended sequences</strong>: Sometimes it&#39;s useful to model <em>infinite or ridiculously long sequences</em>. For example, the set of all positive integers.</li>
+<li><strong>Lazy sequences</strong>: A lazy sequence doesn&#39;t have a value until the moment the consumer asks for it, which can save both memory and CPU cycles.</li>
 </ol>
-<p>Unlike arrays, iterators are easily capable of modeling both scenarios.</p>
+<p>Unlike arrays, iterators are capable of both.</p>
 <h2 id="separation-of-concerns">Separation of concerns</h2>
-<p>Iterators are able to do this by implementing proper <em>separation of concerns</em>. In pre-ES6 pull/push scenarios, recall that all responsibility was placed onto either the consumer or the producer. With iterators, responsibility is split. The consumer is in charge of deciding <em>if and when</em> to pull out the next thing, while the producer is in charge of <em>how</em> to provide the thing.</p>
-<p>This frees you up to model a sequence however you see fit, whether it be an array, a binary tree or some other data structure, or a state machine that generates a lazy or unbounded sequence.</p>
-<h2 id="how-do-iterators-work-">How do iterators work?</h2>
-<p>Having looked at the theory behind iterators, let&#39;s dive into how they work. Here&#39;s an overview of the concepts involved.</p>
+<p>Iterators work by dividing concerns between the producer and consumer. The consumer only concerns itself with <em>if and when</em> to pull out the next thing, while the producer only needs to worry about <em>how</em> to provide the thing.</p>
+<p>This frees you up to model a sequence however you want, whether it be a data structure like a list or a tree, or a state machine, as in the case of lazy and open-ended sequences.</p>
+<h2 id="how-are-iterators-implemented-">How are iterators implemented?</h2>
+<p>There are actually two concepts involved: <em>iterables</em> and <em>iterators</em>.</p>
 <h2 id="concept-iterables">Concept: Iterables</h2>
 <p>An <em>iterable</em> is any object that implements the <em>iterable protocol</em>. Among other things, any iterable can be for/of&#39;d. Lots of things you encounter on a daily basis are iterable, such as arrays and strings.</p>
-<h2 id="concept-the-iterable-protocol">Concept: The iterable protocol</h2>
+<h3 id="the-iterable-protocol">The iterable protocol</h3>
 <p>To implement the iterable protocol, an object must have a <code>[Symbol.iterator]</code> property which is a function that receives no arguments and returns an <em>iterator</em>. (<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol">Read more about symbols</a>.)</p>
 <h2 id="concept-iterators">Concept: Iterators</h2>
 <p>An <em>iterator</em> is any object that implements the <em>iterator protocol</em>. Notice that &quot;iterable&quot; and &quot;iterator&quot; are separate terms with separate meanings! An iterator is an object created by an iterable which is used to consume a sequence once. It&#39;s <em>stateful</em> in the sense that it remembers its current position in the sequence. It&#39;s <em>transient</em> in the sense that every time you loop an iterable, a separate iterator is created and then discarded at the end.</p>
-<h2 id="concept-the-iterator-protocol">Concept: The iterator protocol</h2>
+<h3 id="the-iterator-protocol">The iterator protocol</h3>
 <p>To implement the iterator protocol, an object must have a <code>next</code> method that can be called over and over until iteration is done, at which point the iterator is depleted. Every call to <code>next()</code> returns a <code>{done,value}</code> object. While the iterator isn&#39;t depleted, <code>done</code> will be false. After it&#39;s depleted, <code>done</code> will be true.</p>
 <h2 id="iteration-protocols-in-action">Iteration protocols in action</h2>
-<p>Now that we&#39;ve talked about the iterable and iterator protocols, let&#39;s see how they work. We&#39;ll create an iterator from an array and then deplete it. (If you&#39;re using a modern browser, feel free to paste this code in your console and try it out.)</p>
-<pre><code class="lang-js">// this is our iterable
+<p>To illustrate the above, let&#39;s create an iterator from an array and then deplete it. (If you&#39;re using a modern browser, feel free to paste this code in your console and try it out.)</p>
+<pre><code class="lang-js">// arrays are iterables, so let&#39;s create one
 var array = [ 2, 4, 6 ];
 
-// create an iterator
+// now we&#39;ll create an iterator
 var itr = array[Symbol.iterator]();
 
 // deplete the iterator
@@ -68,24 +68,24 @@ console.log(itr.next()); // { done: false, value: 4 }
 console.log(itr.next()); // { done: false, value: 6 }
 console.log(itr.next()); // { done: true, value: undefined }
 </code></pre>
-<p>Obviously we&#39;ll want to make that into a loop:</p>
+<p>Obviously it would be better to consume the iterator using a loop:</p>
 <pre><code class="lang-js">var itr = array[Symbol.iterator]();
 while (true) {
   var next = itr.next();
   if (!next.done) {
-    console.log(next.value);
+    visit(next.value);
   } else {
     break;
   }
 }
 </code></pre>
-<p>...which is just a manual way of doing what for/of loops do automatically:</p>
+<p>The above is just a manual way of doing what for/of loops do automatically:</p>
 <pre><code class="lang-js">for (var n of array) {
-  console.log(n);
+  visit(n);
 }
 </code></pre>
-<h2 id="example-1-a-range-function">Example 1: a range() function</h2>
-<p>Next, let&#39;s try to implement the iterable protocol on our own object. We&#39;ll have a <code>range()</code> function that represents a sequence of numbers from X to Y. Our goal is to be able to do this:</p>
+<h2 id="let-s-make-our-own-iterable">Let&#39;s make our own iterable</h2>
+<p>In the above, we used an array, which is natively iterable. Next, let&#39;s try making our own objects iterable. We&#39;ll have a <code>range()</code> function that returns an iterable representing a finite sequence of numbers. Our goal is to be able to do this:</p>
 <pre><code class="lang-js">for (var n of range(3, 5)) { ... }
 </code></pre>
 <p>Here&#39;s the code:</p>
@@ -109,11 +109,11 @@ while (true) {
 </code></pre>
 <p>Ugh, that was tedious to type out, and it&#39;s even more tedious to read. I&#39;d probably avoid making iterators if it required doing this sort of thing regularly. But all of that aside, it works!</p>
 <p>Note that it&#39;s is a <em>lazy sequence</em>; at no point do we retain the whole range in memory. Calling <code>range(0, Infinity)</code> is fine, performance-wise, as long as we don&#39;t try to exhaust the sequence!</p>
-<h2 id="example-2-binary-search-tree-iteration">Example 2: binary search tree iteration</h2>
+<h2 id="making-our-own-iterable-round-two">Making our own iterable, round two</h2>
 <p>Flushed with success, let&#39;s try implementing iterable on our binary search tree from the first chapter. Our end goal is to be able to do this:</p>
 <pre><code class="lang-js">for (var val of tree) { ... }
 </code></pre>
-<p>Here&#39;s all the ingredients laid out for us, we merely need to assemble them together, somehow:</p>
+<p>Here&#39;s all the ingredients laid out for us, we merely need to assemble them together:</p>
 <pre><code class="lang-js">class Tree {
 
   // Assume various BST methods already exist
@@ -138,7 +138,7 @@ while (queue.length &gt; 0) {
   if (node.right) { queue.push(node.right); }
 }
 </code></pre>
-<p>If you&#39;re like me, this is where you get stuck. The tree-iteration algorithm <em>runs to completion</em>, which isn&#39;t what we want. This is the pull model; we only want it to run bit-by-bit, at the request of the consumer. Maybe I could instantiate the <code>queue</code> array at the top of the <code>[Symbol.iterator]</code> function, then get rid of the <code>while</code> loop and replace it with...</p>
+<p>If you&#39;re like me, this is where you get stuck. The tree-iteration algorithm <em>runs to completion</em>, which isn&#39;t what we want. This is the pull model, so we only want it to run bit-by-bit, at the request of the consumer. Maybe I could instantiate the <code>queue</code> array at the top of the <code>[Symbol.iterator]</code> function, then get rid of the <code>while</code> loop and replace it with...</p>
 <p>But wait. Stop. It turns out there&#39;s a straightforward way to do this. Enter <em>generators</em>.</p>
 <hr>
 <ul>
@@ -147,8 +147,8 @@ while (queue.length &gt; 0) {
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><strong>Chapter III: Iterators</strong></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
-<li><a href="./05-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
-<li><a href="./06-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./05-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./06-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
 <li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
 <li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>

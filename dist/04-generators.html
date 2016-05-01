@@ -27,8 +27,8 @@ setSize();
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><strong>Chapter IV: Generators</strong></li>
-<li><a href="./05-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
-<li><a href="./06-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./05-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./06-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
 <li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
 <li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
@@ -58,9 +58,10 @@ while (queue.length &gt; 0) {
   if (node.right) { queue.push(node.right); }
 }
 </code></pre>
-<p>Down in the guts of this tree-traversal algorithm, there&#39;s a point where we have the value in-hand. But since iteration is a pull model where the consumer decides when to access each value, we can&#39;t just let the loop run to completion. We have to hand off a value, then suspend the loop mid-flight and wait... somehow.</p>
+<p>Down in the guts of this tree-traversal algorithm, there&#39;s a point where we have the value in-hand. But since iteration is a pull model where the consumer decides when to access each value, we can&#39;t just let the loop run to completion. We have to hand off a value, then <em>suspend</em> the loop mid-flight and wait... somehow.</p>
 <h2 id="the-solution">The solution</h2>
-<p>It turns out that <em>suspending and waiting</em> is exactly what generators do. The mechanics of this are discussed in more detail below, but let&#39;s just jump right to the solution, in which we declare <code>[Symbol.iterator]</code> as a generator by adding an asterisk <code>*</code>, drop our algorithm in wholesale, then hand off the value using <code>yield</code>.</p>
+<p>It turns out that <em>suspending and waiting</em> is exactly what generators do. The mechanics of this are discussed in more detail below, but let&#39;s just jump right to the solution.</p>
+<p>First, we declare <code>[Symbol.iterator]</code> as a generator by adding an asterisk <code>*</code>. Then we drop our algorithm in wholesale. Finally, we hand off the value using a <code>yield</code> expression.</p>
 <pre><code class="lang-js">class Tree {
   // ...
   *[Symbol.iterator]() {
@@ -73,13 +74,10 @@ while (queue.length &gt; 0) {
     }
   }
 }
-
-// elsewhere...
-for (const value of tree) {
-  visit(value); // &lt;-- consume
-}
 </code></pre>
-<p>And because a generator returns an iterator, we&#39;ve satisfied the iterable protocol.</p>
+<p>Because a generator returns an iterator, we&#39;ve satisfied the iterable protocol and we can consume our tree:</p>
+<pre><code class="lang-js">for (const value of tree) { ... }
+</code></pre>
 <h2 id="okay-but-how-do-generators-work-">Okay, but <em>how</em> do generators work?</h2>
 <p>Essentially, what happens is that when the <code>*[Symbol.iterator]</code> generator function is called, instead of running our algorithm to completion, JavaScript puts it into a <em>paused</em> state, without running it.</p>
 <p>Meanwhile, JavaScript returns an iterator &quot;<code>itr</code>&quot; to the caller. When <code>itr.next()</code> is called, JavaScript presses <em>play</em> on the algorithm, which runs right up until the point it encounters a <code>yield</code>, then pauses again. The yielded value is subsequently returned from <code>itr.next()</code> along with <code>done: false</code>.</p>
@@ -95,8 +93,8 @@ for (const value of tree) {
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><strong>Chapter IV: Generators</strong></li>
-<li><a href="./05-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
-<li><a href="./06-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./05-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
+<li><a href="./06-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
 <li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
 <li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
