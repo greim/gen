@@ -4,7 +4,7 @@
 
 ## What else can iterators do?
 
-The power of iteration is the power of generators, and vice versa. Thus, even though this is a tutorial about generators, we continue exploring iteration. The fact is, for/of isn't the only place where ES6 natively supports iteration. Here are a few others.
+There are quite a few places, besides the for/of loop, where ES6 supports iterators.
 
 ### Spread operators
 
@@ -16,7 +16,7 @@ bar(...foo()); // => { 0: 'a', 1: 'b', 2: 'c' }
 
 ```js
 function* foo() { yield 1, yield 2, yield 3; }
-console.log([...foo()]); // => [ 'a', 'b', 'c' ]
+console.log([...foo()]); // => [ 1, 2, 3 ]
 ```
 
 ### Destructuring
