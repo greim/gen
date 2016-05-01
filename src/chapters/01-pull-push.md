@@ -13,7 +13,7 @@ Terminology note: when you loop through a collection, we'll say that you're the 
 
 ## The pull model
 
-So then, suppose we have a `list` and a `tree` variable. We'll consume these collections by *pulling* elements out sequentially. In the pull model, the consumer is in charge of deciding when to pull things out:
+So then, suppose we have a `list` and a `tree` variable, which we'll consume using the pull model. Think of the pull model as "I'll call you." In other words, *the consumer is in charge* of pulling things out:
 
 ```js
 for (var i=0; i<list.length; i++) {
@@ -37,7 +37,7 @@ It would be annoying to have to type out this this pile of code every time I wan
 
 ## The push model
 
-If you're familiar with JavaScript, you're probably thinking there are much better ways to do this, and you're right! Let's switch to the *push* model, in which the *producer* takes charge. It does this by providing an `each()` method that accepts a callback, which it uses to push values back at us. Let's assume both our list and our tree have such a method. Suddenly everything's a lot easier:
+If you're familiar with JavaScript, you're probably thinking there are much better ways to do this, and you're right! Let's switch to the push model, AKA "you call me." In the push model, *the producer is in charge* by providing an `each()` method that accepts a callback, which it uses to push values back at us. Let's assume both our list and our tree have such a method. Suddenly everything's a lot easier:
 
 ```js
 list.each(elmt => visit(elmt));
