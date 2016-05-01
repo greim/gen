@@ -39,7 +39,7 @@ setSize();
 <p>If you&#39;re like me, this will hurt your brain... at first. But there&#39;s a good reason for it, since it allows passing any iterator where an iterable is expected. Why would I want to do that, you ask? Because it allows doing this:</p>
 <pre><code class="lang-js">for (const key of map.keys()) { ... }
 </code></pre>
-<p>As the <code>Map#keys()</code> method demonstrates, <code>object[Symbol.iterator]()</code> isn&#39;t the only thing that can return iterators. We definitely want the ability to pass in iterators in places where iterables are expected, such as for/of loops.</p>
+<p>As the <code>Map#keys()</code> method demonstrates, <code>object[Symbol.iterator]()</code> isn&#39;t the only thing that can return iterators. Some methods just return iterators directly. We definitely want the ability to use these in places where iterables are expected, such as for/of loops.</p>
 <h2 id="what-does-this-mean-for-you-">What does this mean for you?</h2>
 <p>This shakes out in a number of ways in practice.</p>
 <h3 id="always-deal-in-iterables">Always deal in iterables</h3>
