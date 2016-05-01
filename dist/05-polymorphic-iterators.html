@@ -34,16 +34,16 @@ setSize();
 </ul>
 <h2 id="a-rabbit-hole">A rabbit hole</h2>
 <p>Having covered the basics of iteration and generators, we now take a break in order to go down a bit of a rabbit-hole.</p>
-<p>Recall that iterators and iterables are separate things. Well, plot twist: Pretty much every <em>native</em> JavaScript iterator object self-referentially implements the iterable protocol by having a <code>[Symbol.iterator]</code> method which returns itself. Thus, some objects end up being both iterators and iterables, simultaneously!</p>
+<p>Recall that iterators and iterables are separate things. Well, plot twist: Pretty much every <em>native</em> JavaScript iterator object implements the iterable protocol by having a <code>[Symbol.iterator]</code> method which returns itself. In effect, most iterators are both iterators and iterables, simultaneously!</p>
 <h2 id="possibly-confusing-but-useful">Possibly confusing, but useful</h2>
-<p>If you&#39;re like me, this fact will hurt your brain... at first. But there&#39;s a good reason for it, since it allows passing any iterator where an iterable is expected. Why would I want to do that, you ask? Because it allows doing this:</p>
+<p>If you&#39;re like me, this will hurt your brain... at first. But there&#39;s a good reason for it, since it allows passing any iterator where an iterable is expected. Why would I want to do that, you ask? Because it allows doing this:</p>
 <pre><code class="lang-js">for (const key of map.keys()) { ... }
 </code></pre>
-<p>As the <code>Map#keys()</code> method demonstrates, <code>object[Symbol.iterator]()</code> isn&#39;t the only thing that can return iterators. Thus, we need the ability to use any arbitrary iterator in places where iterables are expected, such as for/of loops.</p>
+<p>As the <code>Map#keys()</code> method demonstrates, <code>object[Symbol.iterator]()</code> isn&#39;t the only thing that can return iterators. We definitely want the ability to pass in iterators in places where iterables are expected, such as for/of loops.</p>
 <h2 id="what-does-this-mean-for-you-">What does this mean for you?</h2>
 <p>This shakes out in a number of ways in practice.</p>
 <h3 id="always-deal-in-iterables">Always deal in iterables</h3>
-<p>You&#39;ll generally want to structure your programs to always accept iterables, never iterators. Along those lines, you should almost never be explicitly calling <code>[Symbol.iterator]()</code> and <code>iterator.next()</code>. Let for/of and other language-level constructs handle that for you. That way, no matter whether an iterable or iterator is passed to your program, as long as you treat it as an iterable, you&#39;re covered.</p>
+<p>It&#39;s generally a good idea to structure your programs to always accept iterables, never iterators. Along those lines, you should almost never be explicitly calling <code>[Symbol.iterator]()</code> and <code>iterator.next()</code>. Let for/of and other language-level constructs handle that for you. That way, no matter whether an iterable or iterator is passed to your program, as long as you treat it as an iterable, you&#39;re covered.</p>
 <h3 id="know-your-iterators">Know your iterators</h3>
 <p>Iterators are <em>unicast</em> by design, meaning that when one consumer pulls out a value, no other consumer will ever see it. Thus, even though you&#39;ve structured your code to deal exclusively in iterables, you&#39;re still sort of on the hook to know which things are actually iterators.</p>
 <pre><code class="lang-js">var keys1 = Object.keys(obj); // iterable
