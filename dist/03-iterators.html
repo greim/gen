@@ -43,7 +43,7 @@ setSize();
 <p>Unlike arrays, iterators are capable of both.</p>
 <h2 id="separation-of-concerns">Separation of concerns</h2>
 <p>Iterators work by dividing concerns between the producer and consumer. The consumer only concerns itself with <em>if and when</em> to pull out the next thing, while the producer only needs to worry about <em>how</em> to provide the thing.</p>
-<p>This frees you up to model a sequence however you want, whether it be a data structure like a list or a tree, or a state machine, as in the case of lazy and open-ended sequences.</p>
+<p>This frees you up to model a sequence however you want, whether it be a data structure like a list or a tree, or a state machine, as in the case of lazy and open-ended sequences. Then, to make it so people can iterate them, all you have to do is implement the right protocol!</p>
 <h2 id="how-are-iterators-implemented-">How are iterators implemented?</h2>
 <p>There are actually two concepts involved: <em>iterables</em> and <em>iterators</em>.</p>
 <h2 id="concept-iterables">Concept: Iterables</h2>
