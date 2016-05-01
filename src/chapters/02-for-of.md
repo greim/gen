@@ -45,7 +45,7 @@ There's more good news: arrays are just one of many things in ES6 can be for/of'
  * args in an `arguments` object.
  * DOM elements gotten from `document.querySelectorAll()` or `elmt.getElementsByClassName()`.
 
-Okay so for/of is rad and we like it. But this raises the question: what makes something for/of-able? Are only built-in objects for/of-able, or could our binary search tree from the last chapter also be looped using for/of? That's where ES6 iterators come in, and it's the topic of the next chapter.
+Okay so for/of is rad and we like it. But this raises the question: what makes something for/of-able? Do only built-in objects have this ability, or could our binary search tree from the last chapter also be for/of'd? That's where ES6 iterators come in, and it's the topic of the next chapter.
 
 ----------------
 

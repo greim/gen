@@ -4,7 +4,7 @@
 
 ## Introducing *iterators*
 
-In the previous chapter, we learned how the for/of loop retains the powers of the pull model, while gaining powers of the push model. But to understand *why* this is the case, we have to look at iterators.
+In the previous chapter, we learned how the for/of loop retains the powers of the pull model, while gaining powers of the push model. But to understand why that's the case, we have to look at iterators.
 
 ## A theory of abstract sequences
 
