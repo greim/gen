@@ -32,11 +32,13 @@ while (queue.length > 0) {
 }
 ```
 
-Down in the guts of this tree-traversal algorithm, there's a point where we have the value in-hand. But since iteration is a pull model where the consumer decides when to access each value, we can't just let the loop run to completion. We have to hand off a value, then suspend the loop mid-flight and wait... somehow.
+Down in the guts of this tree-traversal algorithm, there's a point where we have the value in-hand. But since iteration is a pull model where the consumer decides when to access each value, we can't just let the loop run to completion. We have to hand off a value, then *suspend* the loop mid-flight and wait... somehow.
 
 ## The solution
 
-It turns out that *suspending and waiting* is exactly what generators do. The mechanics of this are discussed in more detail below, but let's just jump right to the solution, in which we declare `[Symbol.iterator]` as a generator by adding an asterisk `*`, drop our algorithm in wholesale, then hand off the value using `yield`.
+It turns out that *suspending and waiting* is exactly what generators do. The mechanics of this are discussed in more detail below, but let's just jump right to the solution.
+
+First, we declare `[Symbol.iterator]` as a generator by adding an asterisk `*`. Then we drop our algorithm in wholesale. Finally, we hand off the value using a `yield` expression.
 
 ```js
 class Tree {
@@ -51,14 +53,13 @@ class Tree {
     }
   }
 }
-
-// elsewhere...
-for (const value of tree) {
-  visit(value); // <-- consume
-}
 ```
 
-And because a generator returns an iterator, we've satisfied the iterable protocol.
+Because a generator returns an iterator, we've satisfied the iterable protocol and we can consume our tree:
+
+```js
+for (const value of tree) { ... }
+```
 
 ## Okay, but *how* do generators work?
 

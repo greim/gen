@@ -4,7 +4,7 @@
 
 ## Looping collections
 
-We'll kick things off by looking at *collections*, which are things that you might want to *loop*. Some examples:
+We'll kick things off by considering ways to loop through two common data structures: trees and lists.
 
  * **Lists**: In a list, everything exists sequentially in a line, so looping is easy.
  * **Trees**: A tree has a non-linear branching structure, so looping it isn't so easy.
@@ -13,7 +13,7 @@ Terminology note: when you loop through a collection, we'll say that you're the 
 
 ## The pull model
 
-Suppose we have a `list` and a `tree` variable. We'll consume these collections by *pulling* elements out sequentially. In the pull model, the consumer is in charge of deciding when to pull things out:
+So then, suppose we have a `list` and a `tree` variable. We'll consume these collections by *pulling* elements out sequentially. In the pull model, the consumer is in charge of deciding when to pull things out:
 
 ```js
 for (var i=0; i<list.length; i++) {
@@ -21,7 +21,7 @@ for (var i=0; i<list.length; i++) {
 }
 ```
 
-Consuming the tree is harder, since how do you loop a non-linear thing? Let's assume it's a [binary search tree](https://en.wikipedia.org/wiki/Binary_search_tree). A bit of googling turns up an algorithm we can use to "loop" it:
+Consuming the tree is harder, since how do you loop a non-linear thing? Let's assume it's a [binary search tree](https://en.wikipedia.org/wiki/Binary_search_tree). A bit of googling turns up an algorithm we can use:
 
 ```js
 var queue = tree.root ? [tree.root] : [];
@@ -33,18 +33,18 @@ while (queue.length > 0) {
 }
 ```
 
-At least for me, it's annoying to have to memorize and type out this this pile of code every time I want to loop a tree, but I have to since this is the pull model and I'm in charge.
+It would be annoying to have to type out this this pile of code every time I want to loop a tree, but since this is the pull model and I'm in charge, the responsibility falls to me.
 
 ## The push model
 
-If you're familiar with JavaScript, the above examples likely seem unsatisfactory. Let's switch to the *push* model, in which the *producer* takes charge. It does this by providing an `each()` method that accepts a callback, which it uses to push values back at us. Let's assume both our list and our tree have such a method. Suddenly everything's a lot easier:
+If you're familiar with JavaScript, you're probably thinking there are much better ways to do this, and you're right! Let's switch to the *push* model, in which the *producer* takes charge. It does this by providing an `each()` method that accepts a callback, which it uses to push values back at us. Let's assume both our list and our tree have such a method. Suddenly everything's a lot easier:
 
 ```js
 list.each(elmt => visit(elmt));
 tree.each(elmt => visit(elmt));
 ```
 
-Not only have we written less code, but the messy details are encapsulated away from us, which is a much better separation of concerns.
+Not only have we written less code, but the messy details are encapsulated away from us, which is a great separation of concerns.
 
 ## Unfortunate tradeoffs
 
