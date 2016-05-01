@@ -6,17 +6,17 @@
 
 Having covered the basics of iteration and generators, we now take a break in order to go down a bit of a rabbit-hole.
 
-Recall that iterators and iterables are separate things. Well, plot twist: Pretty much every *native* JavaScript iterator object self-referentially implements the iterable protocol by having a `[Symbol.iterator]` method which returns itself. Thus, some objects end up being both iterators and iterables, simultaneously!
+Recall that iterators and iterables are separate things. Well, plot twist: Pretty much every *native* JavaScript iterator object implements the iterable protocol by having a `[Symbol.iterator]` method which returns itself. In effect, most iterators are both iterators and iterables, simultaneously!
 
 ## Possibly confusing, but useful
 
-If you're like me, this fact will hurt your brain... at first. But there's a good reason for it, since it allows passing any iterator where an iterable is expected. Why would I want to do that, you ask? Because it allows doing this:
+If you're like me, this will hurt your brain... at first. But there's a good reason for it, since it allows passing any iterator where an iterable is expected. Why would I want to do that, you ask? Because it allows doing this:
 
 ```js
 for (const key of map.keys()) { ... }
 ```
 
-As the `Map#keys()` method demonstrates, `object[Symbol.iterator]()` isn't the only thing that can return iterators. Thus, we need the ability to use any arbitrary iterator in places where iterables are expected, such as for/of loops.
+As the `Map#keys()` method demonstrates, `object[Symbol.iterator]()` isn't the only thing that can return iterators. We definitely want the ability to pass in iterators in places where iterables are expected, such as for/of loops.
 
 ## What does this mean for you?
 
@@ -24,7 +24,7 @@ This shakes out in a number of ways in practice.
 
 ### Always deal in iterables
 
-You'll generally want to structure your programs to always accept iterables, never iterators. Along those lines, you should almost never be explicitly calling `[Symbol.iterator]()` and `iterator.next()`. Let for/of and other language-level constructs handle that for you. That way, no matter whether an iterable or iterator is passed to your program, as long as you treat it as an iterable, you're covered.
+It's generally a good idea to structure your programs to always accept iterables, never iterators. Along those lines, you should almost never be explicitly calling `[Symbol.iterator]()` and `iterator.next()`. Let for/of and other language-level constructs handle that for you. That way, no matter whether an iterable or iterator is passed to your program, as long as you treat it as an iterable, you're covered.
 
 ### Know your iterators
 
