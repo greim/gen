@@ -16,7 +16,7 @@ If you're like me, this will hurt your brain... at first. But there's a good rea
 for (const key of map.keys()) { ... }
 ```
 
-As the `Map#keys()` method demonstrates, `object[Symbol.iterator]()` isn't the only thing that can return iterators. We definitely want the ability to pass in iterators in places where iterables are expected, such as for/of loops.
+As the `Map#keys()` method demonstrates, `object[Symbol.iterator]()` isn't the only thing that can return iterators. Some methods just return iterators directly. We definitely want the ability to use these in places where iterables are expected, such as for/of loops.
 
 ## What does this mean for you?
 
