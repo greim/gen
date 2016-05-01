@@ -40,7 +40,7 @@ setSize();
 </ul>
 <p>Terminology note: when you loop through a collection, we&#39;ll say that you&#39;re the <em>consumer</em>, while the collection is the <em>producer</em>.</p>
 <h2 id="the-pull-model">The pull model</h2>
-<p>So then, suppose we have a <code>list</code> and a <code>tree</code> variable. We&#39;ll consume these collections by <em>pulling</em> elements out sequentially. In the pull model, the consumer is in charge of deciding when to pull things out:</p>
+<p>So then, suppose we have a <code>list</code> and a <code>tree</code> variable, which we&#39;ll consume using the pull model. Think of the pull model as &quot;I&#39;ll call you.&quot; In other words, <em>the consumer is in charge</em> of pulling things out:</p>
 <pre><code class="lang-js">for (var i=0; i&lt;list.length; i++) {
   visit(list[i]);
 }
@@ -56,7 +56,7 @@ while (queue.length &gt; 0) {
 </code></pre>
 <p>It would be annoying to have to type out this this pile of code every time I want to loop a tree, but since this is the pull model and I&#39;m in charge, the responsibility falls to me.</p>
 <h2 id="the-push-model">The push model</h2>
-<p>If you&#39;re familiar with JavaScript, you&#39;re probably thinking there are much better ways to do this, and you&#39;re right! Let&#39;s switch to the <em>push</em> model, in which the <em>producer</em> takes charge. It does this by providing an <code>each()</code> method that accepts a callback, which it uses to push values back at us. Let&#39;s assume both our list and our tree have such a method. Suddenly everything&#39;s a lot easier:</p>
+<p>If you&#39;re familiar with JavaScript, you&#39;re probably thinking there are much better ways to do this, and you&#39;re right! Let&#39;s switch to the push model, AKA &quot;you call me.&quot; In the push model, <em>the producer is in charge</em> by providing an <code>each()</code> method that accepts a callback, which it uses to push values back at us. Let&#39;s assume both our list and our tree have such a method. Suddenly everything&#39;s a lot easier:</p>
 <pre><code class="lang-js">list.each(elmt =&gt; visit(elmt));
 tree.each(elmt =&gt; visit(elmt));
 </code></pre>
