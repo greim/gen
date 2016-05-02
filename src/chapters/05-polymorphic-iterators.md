@@ -1,4 +1,4 @@
-# Chapter VI: Polymorphic iterators
+# Chapter V: Polymorphic iterators
 
 {{ toc }}
 
@@ -26,6 +26,10 @@ This shakes out in a number of ways in practice.
 
 It's generally a good idea to structure your programs to always accept iterables, never iterators. Along those lines, you should almost never be explicitly calling `[Symbol.iterator]()` and `iterator.next()`. Let for/of and other language-level constructs handle that for you. That way, no matter whether an iterable or iterator is passed to your program, as long as you treat it as an iterable, you're covered.
 
+### Don't bother manually implementing the iterator protocol
+
+While it's great to understand the iterator protocol, in the vast majority of cases it's better to just let generators create them for you. Not only is it easier, but then your iterators can be used wherever iterables are expected.
+
 ### Know your iterators
 
 Iterators are *unicast* by design, meaning that when one consumer pulls out a value, no other consumer will ever see it. Thus, even though you've structured your code to deal exclusively in iterables, you're still sort of on the hook to know which things are actually iterators.
@@ -46,7 +50,7 @@ for (var x of map.keys()) { ... }
 
 ### Code defensively
 
-In some scenarios you'll just be accepting with an object from somewhere else. You have no way of knowing whether it's an iterable or an iterator.
+In some scenarios you'll just be accepting an object from somewhere else. You have no way of knowing whether it's an iterable or an iterator.
 
 ```js
 function doStuff(iterable) {
