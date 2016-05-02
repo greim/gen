@@ -47,6 +47,8 @@ There's more good news: arrays are just one of many things in ES6 can be for/of'
 
 Okay so for/of is rad and we like it. But this raises the question: what makes something for/of-able? Do only built-in objects have this ability, or could our binary search tree from the last chapter also be for/of'd? That's where ES6 iterators come in, and it's the topic of the next chapter.
 
+{{ next }}
+
 ----------------
 
 {{ toc }}

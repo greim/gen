@@ -6,4 +6,8 @@ Generators are indeed a powerful tool, and I believe that any developer would do
 
 My goal for this tutorial is to make generators easy to understand by starting from the ground up laying out the case for iterators, and then introduce generators as a tool that makes it easy to work with iterators.
 
+{{ next }}
+
+----------------
+
 {{ toc }}

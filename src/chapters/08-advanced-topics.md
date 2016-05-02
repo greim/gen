@@ -126,6 +126,8 @@ All of this of course depends on having a `coroutine()` function that does the r
 
 Finally, it's worth noting that this approach is so powerful that it inspired the [async functions](https://jakearchibald.com/2014/es7-async-functions/) proposal. As of early 2016, it's a stage 3 EcmaScript proposal.
 
+{{ next }}
+
 ----------------
 
 {{ toc }}
