@@ -121,7 +121,7 @@ class Node {
 }
 ```
 
-And voila! We have an in-order iteration over every value in the tree.
+And voila! We have an in-order iteration over every value in the tree. There's also a gist containing a fuller example of an [iterable binary search tree](https://gist.github.com/greim/17ccec50e8ac45a35edf08efec5fe059).
 
 ----------------
 

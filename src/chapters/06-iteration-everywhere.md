@@ -1,10 +1,21 @@
-# Chapter X: Where is iteration used?
+# Chapter VI: Beyond the for/of loop
 
 {{ toc }}
 
 ## What else can iterators do?
 
-There are quite a few places, besides the for/of loop, where ES6 supports iterators.
+This chapter is a quick survey of various other places iterables are used.
+
+## Things that are iterables
+
+ * Arrays
+ * Strings
+ * Maps
+ * Sets
+ * Function `arguments` objects
+ * DOM collections
+
+## Things that accept iterables
 
 ### Spread operators
 
