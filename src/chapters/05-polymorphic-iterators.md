@@ -63,6 +63,8 @@ function doStuff(iterable) {
 
 In that case it's best to just never consume the iterable more than once.
 
+----------------
+
 {{ next }}
 
 ----------------

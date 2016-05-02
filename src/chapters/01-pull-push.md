@@ -56,6 +56,8 @@ So the push model wins, right? Sadly, in the process of switching from pull to p
 
 Those behaviors could be simulated using some sort of pre-agreed-upon signaling mechanism between the callback and its runner, but by then we've begun to re-invent the wheel, since the language gives us those capabilities for free with loops.
 
+----------------
+
 {{ next }}
 
 ----------------

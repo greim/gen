@@ -155,6 +155,8 @@ If you're like me, this is where you get stuck. The tree-iteration algorithm *ru
 
 But wait. Stop. It turns out there's a straightforward way to do this. Enter *generators*.
 
+----------------
+
 {{ next }}
 
 ----------------

@@ -86,6 +86,8 @@ const arr = Array.from(bar());
 console.log(arr); // => [ 1, 2, 3 ]
 ```
 
+----------------
+
 {{ next }}
 
 ----------------
