@@ -57,12 +57,12 @@ for (let n of evenSquares) {
 // =&gt; ...
 </code></pre>
 <h2 id="two-way-communication">Two-way communication</h2>
-<p>You might remember a curious code snippet from a previous chapter, in which <code>yield</code> is placed anywhere an expression is expected:</p>
+<p>It&#39;s syntactically valid for <code>yield</code> or <code>yield x</code> to appear anywhere an expression is expected. For example:</p>
 <pre><code class="lang-js">var myString = `Hello ${yield 4}`;
 </code></pre>
-<p>This raises the question: what are the contents of <code>myString</code>?</p>
+<p>This raises the question: what end up being the contents of <code>myString</code>?</p>
 <p>So far we&#39;ve only looked at <em>consuming</em> information from generators. But here&#39;s yet another twist: if you have an iterator &quot;<code>itr</code>&quot; gotten from a generator, you can pass in an argument: <code>itr.next(someValue)</code>. Inside the generator, what this looks like is that a <code>yield</code> expression evaluates to <code>someValue</code>.</p>
-<p>This is significant, because now instead of a one-way consumer/producer relationship, we have a cooperative, &quot;ping-pong&quot; sort of relationship, with the generator sending things to its runner, and the runner sending things back to the generator.</p>
+<p>This is significant, because now instead of a one-way consumer/producer relationship, we have a two-way, &quot;ping-pong&quot; sort of relationship, with the generator sending things to its runner, and the runner sending things back to the generator.</p>
 <pre><code class="lang-js">// generator
 function* foo() {
   console.log(`Hello ${yield 1}!`); // &#39;Hello world!&#39;
@@ -85,12 +85,15 @@ itr.throw(&#39;oops&#39;);
 </code></pre>
 <p>Note that these capabilities aren&#39;t part of the iterator protocol. Rather, they&#39;re extra powers that generator-created iterators have. <a href="http://www.2ality.com/2015/03/es6-generators.html#return%28%29-and-throw%28%29">Read more about it here</a>.</p>
 <h2 id="async-generators">Async generators</h2>
-<p>This two-way communication between a generator and its runner opens up possibilities in async flow control. A generator can yield promises out to a special runner, which resolves it and then &quot;bounces&quot; the resolved value right back into the generator, asynchronously. What this looks like inside a generator is that a <code>yield promise</code> expression evaluates to the resolved value of that promise, or else throws an exception.</p>
+<p>This two-way communication between a generator and its runner opens up new vistas in async flow control. A generator can yield promises out to a special runner, which resolves it and then &quot;bounces&quot; the resolved value right back into the generator, asynchronously. What this looks like inside a generator is that a <code>yield promise</code> expression evaluates to the resolved value of that promise, or else throws an exception.</p>
+<p>Here&#39;s an example using the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API">fetch API</a>, which is promise-based:</p>
 <pre><code class="lang-js">// in the generator
 var resp = yield fetch(&#39;/users/123&#39;);
 console.log(resp.status);
+var user = yield resp.json();
+console.log(user.name);
 </code></pre>
-<p>This &quot;trampoline&quot; technique gives us callback-free async flow control. All we need is a runner function, which we&#39;ll call <code>coroutine()</code> (think: &quot;cooperative subroutine&quot;) and a generator function to pass to it:</p>
+<p>This &quot;trampoline&quot; technique gives us callback-free async flow control. All we need is a runner function, which we&#39;ll call <code>coroutine()</code>, and a generator function to pass to it:</p>
 <pre><code class="lang-js">const getUsername = coroutine(function*(id) {
   let resp = yield fetch(`/users/${id}`);
   var obj = yield resp.json();
@@ -118,7 +121,7 @@ getGreeting().then(
 </ul>
 <p>The upshot is that we retain the power of asynchronous programming, while gaining the power of imperative, synchronous-style programming. No more callback hell, or thenable heck!</p>
 <p>All of this of course depends on having a <code>coroutine()</code> function that does the right thing. Fortunately, there are multiple libraries to choose from here, including <a href="https://www.npmjs.com/package/co">co</a>, <a href="https://www.npmjs.com/package/bluebird">Bluebird.coroutine</a>, and <a href="https://github.com/kriskowal/q">Q.spawn</a>.</p>
-<p>Finally, it&#39;s worth noting that this approach is so powerful that it inspired the <a href="https://jakearchibald.com/2014/es7-async-functions/">async functions</a> proposal, which mirrors this technique, but at the language level, and without requiring a <code>coroutine()</code> function. As of early 2016, it&#39;s a stage 3 EcmaScript proposal.</p>
+<p>Finally, it&#39;s worth noting that this approach is so powerful that it inspired the <a href="https://jakearchibald.com/2014/es7-async-functions/">async functions</a> proposal. As of early 2016, it&#39;s a stage 3 EcmaScript proposal.</p>
 <hr>
 <ul>
 <li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
