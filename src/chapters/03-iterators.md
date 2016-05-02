@@ -17,7 +17,7 @@ Unlike arrays, iterators are capable of both.
 
 ## Separation of concerns
 
-Iterators work by dividing concerns between the producer and consumer. The consumer only concerns itself with *if and when* to pull out the next thing, while the producer only needs to worry about *how* to provide the thing.
+Iterators work by dividing concerns between the producer and consumer. The consumer only concerns itself with *if and when* to pull out the next thing, while the producer only needs to worry about *how* to provide the thing, and whether it's done.
 
 This frees you up to model a sequence however you want, whether it be a data structure like a list or a tree, or a state machine, as in the case of lazy and open-ended sequences. Then, to make it so people can iterate them, all you have to do is implement the right protocol!
 
