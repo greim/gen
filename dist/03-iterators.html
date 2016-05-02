@@ -141,6 +141,8 @@ while (queue.length &gt; 0) {
 <p>If you&#39;re like me, this is where you get stuck. The tree-iteration algorithm <em>runs to completion</em>, which isn&#39;t what we want. This is the pull model, so we only want it to run bit-by-bit, at the request of the consumer. Maybe I could instantiate the <code>queue</code> array at the top of the <code>[Symbol.iterator]</code> function, then get rid of the <code>while</code> loop and replace it with...</p>
 <p>But wait. Stop. It turns out there&#39;s a straightforward way to do this. Enter <em>generators</em>.</p>
 <hr>
+<p><strong><a href="./04-generators.html">Next: Chapter IV: Generators →</a></strong></p>
+<hr>
 <ul>
 <li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
 <li><a href="./01-pull-push.html">Chapter I: The pull/push conundrum</a></li>
