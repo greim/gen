@@ -4,7 +4,7 @@
 
 ## Revisiting our tree traversal
 
-In a previous chapter, we pimped out our binary search tree with generator-based iteration. Venturing a bit further down that rabbit hole, we note that we used [breadth-first iteration](https://en.wikipedia.org/wiki/Breadth-first_search), meaning that we visited every value at the child level before moving to the grandchild level, etc.
+In a previous chapter, we outfitted our binary search tree with generator-based iterability. Venturing a bit further down that rabbit hole, we note that we used [breadth-first iteration](https://en.wikipedia.org/wiki/Breadth-first_search), meaning that we visited every value at the child level before moving to the grandchild level, etc.
 
 ```js
 // a breadth-first tree traversal algorithm
