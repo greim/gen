@@ -68,9 +68,9 @@ const addNext = co.wrap(function*(data) {
   data.forEach((d, i) => {
     if (i < data.length - 1) {
       const next = data[i + 1];
-      d.next = `**[Next: ${next.heading}](./${next.destBase}) \u2192**`;
+      d.next = `**[Next: ${next.heading} \u2192](./${next.destBase})**`;
     } else {
-      data.next = '**Fin**';
+      d.next = '**Fin**';
     }
   });
 });
@@ -115,6 +115,7 @@ co(function*() {
   yield addDest(data);
   yield addHeading(data);
   yield addToc(data);
+  yield addNext(data);
   yield addInnerMd(data);
   yield addInnerHtml(data);
   yield addWrapped(data, wrapper);
