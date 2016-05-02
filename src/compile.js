@@ -64,6 +64,17 @@ const addToc = co.wrap(function*(data) {
   });
 });
 
+const addNext = co.wrap(function*(data) {
+  data.forEach((d, i) => {
+    if (i < data.length - 1) {
+      const next = data[i + 1];
+      d.next = `**[Next: ${next.heading}](./${next.destBase}) \u2192**`;
+    } else {
+      data.next = '**Fin**';
+    }
+  });
+});
+
 const addInnerMd = co.wrap(function*(data) {
   for (const d of data) d.innerMd = d.compiled(d);
 });
