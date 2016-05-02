@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chapter X: Where is iteration used?</title>
+<title>Chapter VI: Beyond the for/of loop</title>
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
 <link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300' rel='stylesheet' type='text/css'>
@@ -20,20 +20,30 @@ setSize();
 </head>
 <body>
 <div id="wrapper">
-<h1 id="chapter-x-where-is-iteration-used-">Chapter X: Where is iteration used?</h1>
+<h1 id="chapter-vi-beyond-the-for-of-loop">Chapter VI: Beyond the for/of loop</h1>
 <ul>
 <li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
 <li><a href="./01-pull-push.html">Chapter I: The pull/push conundrum</a></li>
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
-<li><a href="./05-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
-<li><strong>Chapter X: Where is iteration used?</strong></li>
+<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
+<li><strong>Chapter VI: Beyond the for/of loop</strong></li>
 <li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
 <li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
 <h2 id="what-else-can-iterators-do-">What else can iterators do?</h2>
-<p>There are quite a few places, besides the for/of loop, where ES6 supports iterators.</p>
+<p>This chapter is a quick survey of various other places iterables are used.</p>
+<h2 id="things-that-are-iterables">Things that are iterables</h2>
+<ul>
+<li>Arrays</li>
+<li>Strings</li>
+<li>Maps</li>
+<li>Sets</li>
+<li>Function <code>arguments</code> objects</li>
+<li>DOM collections</li>
+</ul>
+<h2 id="things-that-accept-iterables">Things that accept iterables</h2>
 <h3 id="spread-operators">Spread operators</h3>
 <pre><code class="lang-js">function* foo() { yield &#39;a&#39;, yield &#39;b&#39;, yield &#39;c&#39;; }
 function bar() { console.log(arguments); }
@@ -88,8 +98,8 @@ console.log(arr); // =&gt; [ 1, 2, 3 ]
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
-<li><a href="./05-polymorphic-iterators.html">Chapter VI: Polymorphic iterators</a></li>
-<li><strong>Chapter X: Where is iteration used?</strong></li>
+<li><a href="./05-polymorphic-iterators.html">Chapter V: Polymorphic iterators</a></li>
+<li><strong>Chapter VI: Beyond the for/of loop</strong></li>
 <li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
 <li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>

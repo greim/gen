@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chapter VI: Polymorphic iterators</title>
+<title>Chapter V: Polymorphic iterators</title>
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
 <link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300' rel='stylesheet' type='text/css'>
@@ -20,15 +20,15 @@ setSize();
 </head>
 <body>
 <div id="wrapper">
-<h1 id="chapter-vi-polymorphic-iterators">Chapter VI: Polymorphic iterators</h1>
+<h1 id="chapter-v-polymorphic-iterators">Chapter V: Polymorphic iterators</h1>
 <ul>
 <li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
 <li><a href="./01-pull-push.html">Chapter I: The pull/push conundrum</a></li>
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
-<li><strong>Chapter VI: Polymorphic iterators</strong></li>
-<li><a href="./06-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
+<li><strong>Chapter V: Polymorphic iterators</strong></li>
+<li><a href="./06-iteration-everywhere.html">Chapter VI: Beyond the for/of loop</a></li>
 <li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
 <li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
@@ -44,6 +44,8 @@ setSize();
 <p>This shakes out in a number of ways in practice.</p>
 <h3 id="always-deal-in-iterables">Always deal in iterables</h3>
 <p>It&#39;s generally a good idea to structure your programs to always accept iterables, never iterators. Along those lines, you should almost never be explicitly calling <code>[Symbol.iterator]()</code> and <code>iterator.next()</code>. Let for/of and other language-level constructs handle that for you. That way, no matter whether an iterable or iterator is passed to your program, as long as you treat it as an iterable, you&#39;re covered.</p>
+<h3 id="don-t-bother-manually-implementing-the-iterator-protocol">Don&#39;t bother manually implementing the iterator protocol</h3>
+<p>While it&#39;s great to understand the iterator protocol, in the vast majority of cases it&#39;s better to just let generators create them for you. Not only is it easier, but then your iterators can be used wherever iterables are expected.</p>
 <h3 id="know-your-iterators">Know your iterators</h3>
 <p>Iterators are <em>unicast</em> by design, meaning that when one consumer pulls out a value, no other consumer will ever see it. Thus, even though you&#39;ve structured your code to deal exclusively in iterables, you&#39;re still sort of on the hook to know which things are actually iterators.</p>
 <pre><code class="lang-js">var keys1 = Object.keys(obj); // iterable
@@ -56,7 +58,7 @@ for (var x of keys2) { ... } // can NEVER do this again
 <pre><code class="lang-js">for (var x of map.keys()) { ... }
 </code></pre>
 <h3 id="code-defensively">Code defensively</h3>
-<p>In some scenarios you&#39;ll just be accepting with an object from somewhere else. You have no way of knowing whether it&#39;s an iterable or an iterator.</p>
+<p>In some scenarios you&#39;ll just be accepting an object from somewhere else. You have no way of knowing whether it&#39;s an iterable or an iterator.</p>
 <pre><code class="lang-js">function doStuff(iterable) {
   for (let x of iterable) { ... }
   // Now consider `iterable` to have
@@ -72,8 +74,8 @@ for (var x of keys2) { ... } // can NEVER do this again
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
 <li><a href="./04-generators.html">Chapter IV: Generators</a></li>
-<li><strong>Chapter VI: Polymorphic iterators</strong></li>
-<li><a href="./06-iteration-everywhere.html">Chapter X: Where is iteration used?</a></li>
+<li><strong>Chapter V: Polymorphic iterators</strong></li>
+<li><a href="./06-iteration-everywhere.html">Chapter VI: Beyond the for/of loop</a></li>
 <li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
 <li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
