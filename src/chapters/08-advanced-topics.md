@@ -38,17 +38,17 @@ for (let n of evenSquares) {
 
 ## Two-way communication
 
-You might remember a curious code snippet from a previous chapter, in which `yield` is placed anywhere an expression is expected:
+It's syntactically valid for `yield` or `yield x` to appear anywhere an expression is expected. For example:
 
 ```js
 var myString = `Hello ${yield 4}`;
 ```
 
-This raises the question: what are the contents of `myString`?
+This raises the question: what end up being the contents of `myString`?
 
 So far we've only looked at *consuming* information from generators. But here's yet another twist: if you have an iterator "`itr`" gotten from a generator, you can pass in an argument: `itr.next(someValue)`. Inside the generator, what this looks like is that a `yield` expression evaluates to `someValue`.
 
-This is significant, because now instead of a one-way consumer/producer relationship, we have a cooperative, "ping-pong" sort of relationship, with the generator sending things to its runner, and the runner sending things back to the generator.
+This is significant, because now instead of a one-way consumer/producer relationship, we have a two-way, "ping-pong" sort of relationship, with the generator sending things to its runner, and the runner sending things back to the generator.
 
 ```js
 // generator
@@ -79,15 +79,19 @@ Note that these capabilities aren't part of the iterator protocol. Rather, they'
 
 ## Async generators
 
-This two-way communication between a generator and its runner opens up possibilities in async flow control. A generator can yield promises out to a special runner, which resolves it and then "bounces" the resolved value right back into the generator, asynchronously. What this looks like inside a generator is that a `yield promise` expression evaluates to the resolved value of that promise, or else throws an exception.
+This two-way communication between a generator and its runner opens up new vistas in async flow control. A generator can yield promises out to a special runner, which resolves it and then "bounces" the resolved value right back into the generator, asynchronously. What this looks like inside a generator is that a `yield promise` expression evaluates to the resolved value of that promise, or else throws an exception.
+
+Here's an example using the [fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), which is promise-based:
 
 ```js
 // in the generator
 var resp = yield fetch('/users/123');
 console.log(resp.status);
+var user = yield resp.json();
+console.log(user.name);
 ```
 
-This "trampoline" technique gives us callback-free async flow control. All we need is a runner function, which we'll call `coroutine()` (think: "cooperative subroutine") and a generator function to pass to it:
+This "trampoline" technique gives us callback-free async flow control. All we need is a runner function, which we'll call `coroutine()`, and a generator function to pass to it:
 
 ```js
 const getUsername = coroutine(function*(id) {
@@ -120,7 +124,7 @@ The upshot is that we retain the power of asynchronous programming, while gainin
 
 All of this of course depends on having a `coroutine()` function that does the right thing. Fortunately, there are multiple libraries to choose from here, including [co](https://www.npmjs.com/package/co), [Bluebird.coroutine](https://www.npmjs.com/package/bluebird), and [Q.spawn](https://github.com/kriskowal/q).
 
-Finally, it's worth noting that this approach is so powerful that it inspired the [async functions](https://jakearchibald.com/2014/es7-async-functions/) proposal, which mirrors this technique, but at the language level, and without requiring a `coroutine()` function. As of early 2016, it's a stage 3 EcmaScript proposal.
+Finally, it's worth noting that this approach is so powerful that it inspired the [async functions](https://jakearchibald.com/2014/es7-async-functions/) proposal. As of early 2016, it's a stage 3 EcmaScript proposal.
 
 ----------------
 
