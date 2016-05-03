@@ -77,8 +77,6 @@ This happens anywhere between zero and infinity times. If/when the generator alg
 { value: /* whatever was returned */, done: true }
 ```
 
-**Note:** to the outside world, there's no discernible difference between a function that returns an iterator and a generator function. If you ever find yourself in a situation where you need to know whether a function is a generator, consider instead just inspecting the return value to see if it's an iterator.
-
 ----------------
 
 {{ next }}

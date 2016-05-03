@@ -10,7 +10,7 @@ We'll kick things off by considering two common data structures: trees and lists
 
 ## Pull mode
 
-We'll consume our tree and list in pull mode. Think of pull as "I'll call you." In other words, the consumer is in charge of pulling things out:
+As chunks of data are transferred from producer to consumer, "pull mode" just means that the consumer initiates each transfer, while the producer simply waits to be read from. It might sound complicated, but all it is is this:
 
 ```js
 for (var i=0; i<list.length; i++) {
@@ -18,7 +18,7 @@ for (var i=0; i<list.length; i++) {
 }
 ```
 
-Consuming the tree isn't quite as easy. Let's assume it's a [binary search tree](https://en.wikipedia.org/wiki/Binary_search_tree). A bit of googling turns up an algorithm we can use:
+Consuming a tree in pull mode is slightly more complicated. Let's assume it's a [binary search tree](https://en.wikipedia.org/wiki/Binary_search_tree). A bit of googling turns up an algorithm we can use:
 
 ```js
 var queue = tree.root ? [tree.root] : [];
@@ -30,18 +30,18 @@ while (queue.length > 0) {
 }
 ```
 
-It would be annoying to have to type out this this pile of code every time I want to loop a tree, but it gets the job done.
+It would be annoying to have to type out this pile of code every time I want to loop a tree, but since I'm the one initiating the transfer, the task falls to me.
 
 ## Push mode
 
-If you're familiar with JavaScript, you're probably thinking there are better ways to do this. Let's switch to push mode—AKA "you call me"—in which the producer is in charge. The collection has an `each()` method that accepts a callback, which it uses to push values back at us. This makes everything easier:
+Which raises the question: why should I be the one to initiate the transfers? Why not let producer do it? Hence push mode, in which the collection has an `each()` method that accepts a callback, which it uses to push values to us.
 
 ```js
 list.each(elmt => visit(elmt));
 tree.each(elmt => visit(elmt));
 ```
 
-The messy details still exist in the implementations of those `each()` methods, but they're are encapsulated away from us, which is a great separation of concerns.
+The messy details still exist in the implementations of the `each()` method, but they're encapsulated away from us, which is a great separation of concerns.
 
 ## Unfortunate tradeoffs
 

@@ -1,4 +1,68 @@
 <!doctype html>
+<!--
+
+
+
+
+
+
+
+                   `-/oyhmmNMMMMNmmhyo/-`
+               ./ymMMMMMMMMMMMMMMMMMMMMMMmy/.
+            .omMNyohNMMMMMMMMMMMMMMMMMMMMMMMMmo.
+          /dMms- +NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMd/
+        +NMh:  `hMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN+
+      :mMh-    hMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMm:
+    `yMm:     :MMMMMMMMMMMMy:..:yMMMMMMMMMMMMMMMMMMMMMy`
+   .mMh`      sMMMMMMMMMMM+      +MMMMMMMMMMMMMMMMMMMMMm.
+  .mMs        yMMMMMMMMMMM/      /MMMMMMMMMMMMMMMMMMMMMMm.
+ `mMy         /MMMMMMMMMMMMs-``-sMMMMMMMMMMMMMMMMMMMMMMMMm`
+ yMd           mMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMs
+.MM-           .mMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM.
+sMd             `hMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMs
+mMo               :hMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMm
+MM/                 .+hNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MM/                     .:+oossydNMMMMMMMMMMMMMMMMMMMMMMMMMM
+mMo                               `/yNMMMMMMMMMMMMMMMMMMMMMm
+sMd                                   /mMMMMMMMMMMMMMMMMMMMs
+.MM-                                    oMMMMMMMMMMMMMMMMMM.
+ sMd                                     +MMMMMMMMMMMMMMMMs
+ `mMs                      `:++:`         yMMMMMMMMMMMMMMm`
+  .mMs                    :NMMMMN:        :MMMMMMMMMMMMMm.
+   .mMh`                  hMMMMMMh        :MMMMMMMMMMMMm.
+    `yMm:                 -dMMMMd-        oMMMMMMMMMMMy`
+      :mMh-                 .::.         .NMMMMMMMMMm:
+        +NMh:                           -NMMMMMMMMN+
+          /dMms-                      `sMMMMMMMMd/
+            .omMNy+-                :yNMMMMMMmo.
+               ./ymMMmhs+/:————:+shNMMMMMmy/.
+                   `-/oyhdmNMMMMNmdhyo/-`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-->
 <html>
 <head>
 <meta charset="utf-8">
@@ -22,7 +86,7 @@ setSize();
 <div id="wrapper">
 <h1 id="chapter-iii-iterators">Chapter III: Iterators</h1>
 <ul>
-<li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
+<li><a href="./00-intro.html">The Yin-Yang of Generators and Iterators</a></li>
 <li><a href="./01-pull-push.html">Chapter I: The pull/push conundrum</a></li>
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><strong>Chapter III: Iterators</strong></li>
@@ -40,12 +104,12 @@ setSize();
 <li><strong>Open-ended sequences</strong>: Sometimes it&#39;s useful to model <em>infinite or ridiculously long sequences</em>. For example, the set of all positive integers.</li>
 <li><strong>Lazy sequences</strong>: Sometimes it&#39;s useful to model lazy sequences, which don&#39;t have a value until the moment the consumer asks for it. This can save both memory and CPU cycles.</li>
 </ol>
-<p>Iterators have no problem with the above, due to how they separate concerns around a common <em>protocol</em>. The protocol defines the minimal operations needed in order to iterate a sequence: 1) what&#39;s the next thing? and 2) is it done yet?</p>
-<p>As long as you implement the protocol, you—the producer—can model a sequence however you want. As long as you call into the protocol, you—the consumer—are free to decide when to iterate and whether to bail out of the iteration.</p>
-<p>Finally, because it&#39;s defined in the language, language-level hooks exist that make calling into the protocol simple via the for/of loop, and implementing the protocol simple via generators. But we&#39;re getting ahead of ourselves! First let&#39;s look at how these protocols work. There are actually two concepts—and two protocols—involved.</p>
+<p>Iterators have no problem with the above, due to how they separate concerns around a protocol defining the minimum operations for sequence traversal: A) what&#39;s the next thing? and B) are we done yet?</p>
+<p>As long as you implement this minimal protocol, you—the producer—are free to model a sequence however you want. As long as you adhere to this protocol, you—the consumer—are free to decide when to iterate and whether to bail out of the iteration.</p>
+<p>Finally, because it&#39;s defined in the language, language-level hooks exist that make working with iterators ultra-simple. On the consumer side, this is the for/of loop. On the producer side, it&#39;s generators. But we&#39;re getting ahead of ourselves! First let&#39;s look at how these protocols work. There are actually two concepts in play—iterables and iterators—each with its own protocol.</p>
 <h2 id="concept-iterables">Concept: Iterables</h2>
-<p>An <em>iterable</em> is any object that implements the <em>iterable protocol</em>. Among other things, any iterable can be for/of&#39;d.</p>
-<p><strong>The iterable protocol:</strong> To implement the iterable protocol, an object must have a <code>[Symbol.iterator]</code> property which is a function that receives no arguments and returns an <em>iterator</em>. (<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol">Read more about symbols</a>.)</p>
+<p>Informally, an <em>iterable</em> is any object that can be for/of&#39;d. Technically, an iterable is an object that implements the <em>iterable protocol</em>.</p>
+<p><strong>The iterable protocol:</strong> To implement the iterable protocol, an object must have a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol">[Symbol.iterator]</a> property which is a function that receives no arguments and returns an <em>iterator</em>.</p>
 <h2 id="concept-iterators">Concept: Iterators</h2>
 <p>An <em>iterator</em> is any object that implements the <em>iterator protocol</em>. It&#39;s transient in that every time you loop an iterable, a new iterator is created and then discarded. It&#39;s stateful in that it remembers its current position in the sequence at any given time.</p>
 <p><strong>The iterator protocol:</strong> To implement the iterator protocol, an object must have a <code>next</code> method that can be called over and over until iteration is done, at which point the iterator is depleted. Every call to <code>next()</code> returns a <code>{done,value}</code> object. While the iterator isn&#39;t depleted, <code>done</code> will be false. After it&#39;s depleted, <code>done</code> will be true.</p>
@@ -138,7 +202,7 @@ while (queue.length &gt; 0) {
 <p><strong><a href="./04-generators.html">Next: Chapter IV: Generators →</a></strong></p>
 <hr>
 <ul>
-<li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
+<li><a href="./00-intro.html">The Yin-Yang of Generators and Iterators</a></li>
 <li><a href="./01-pull-push.html">Chapter I: The pull/push conundrum</a></li>
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><strong>Chapter III: Iterators</strong></li>

@@ -1,4 +1,68 @@
 <!doctype html>
+<!--
+
+
+
+
+
+
+
+                   `-/oyhmmNMMMMNmmhyo/-`
+               ./ymMMMMMMMMMMMMMMMMMMMMMMmy/.
+            .omMNyohNMMMMMMMMMMMMMMMMMMMMMMMMmo.
+          /dMms- +NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMd/
+        +NMh:  `hMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN+
+      :mMh-    hMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMm:
+    `yMm:     :MMMMMMMMMMMMy:..:yMMMMMMMMMMMMMMMMMMMMMy`
+   .mMh`      sMMMMMMMMMMM+      +MMMMMMMMMMMMMMMMMMMMMm.
+  .mMs        yMMMMMMMMMMM/      /MMMMMMMMMMMMMMMMMMMMMMm.
+ `mMy         /MMMMMMMMMMMMs-``-sMMMMMMMMMMMMMMMMMMMMMMMMm`
+ yMd           mMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMs
+.MM-           .mMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM.
+sMd             `hMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMs
+mMo               :hMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMm
+MM/                 .+hNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MM/                     .:+oossydNMMMMMMMMMMMMMMMMMMMMMMMMMM
+mMo                               `/yNMMMMMMMMMMMMMMMMMMMMMm
+sMd                                   /mMMMMMMMMMMMMMMMMMMMs
+.MM-                                    oMMMMMMMMMMMMMMMMMM.
+ sMd                                     +MMMMMMMMMMMMMMMMs
+ `mMs                      `:++:`         yMMMMMMMMMMMMMMm`
+  .mMs                    :NMMMMN:        :MMMMMMMMMMMMMm.
+   .mMh`                  hMMMMMMh        :MMMMMMMMMMMMm.
+    `yMm:                 -dMMMMd-        oMMMMMMMMMMMy`
+      :mMh-                 .::.         .NMMMMMMMMMm:
+        +NMh:                           -NMMMMMMMMN+
+          /dMms-                      `sMMMMMMMMd/
+            .omMNy+-                :yNMMMMMMmo.
+               ./ymMMmhs+/:————:+shNMMMMMmy/.
+                   `-/oyhdmNMMMMNmdhyo/-`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-->
 <html>
 <head>
 <meta charset="utf-8">
@@ -22,7 +86,7 @@ setSize();
 <div id="wrapper">
 <h1 id="chapter-ii-the-for-of-loop">Chapter II: The for/of loop</h1>
 <ul>
-<li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
+<li><a href="./00-intro.html">The Yin-Yang of Generators and Iterators</a></li>
 <li><a href="./01-pull-push.html">Chapter I: The pull/push conundrum</a></li>
 <li><strong>Chapter II: The for/of loop</strong></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
@@ -32,9 +96,9 @@ setSize();
 <li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
 <li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
-<h2 id="a-new-twist">A new twist</h2>
+<h2 id="a-new-kind-of-loop">A new kind of loop</h2>
 <p>In the first chapter, we learned about tradeoffs between <em>pull</em> and <em>push</em> mode for consuming collections. However, ES6 introduces a new way of looping that we failed to take into account: the for/of loop.</p>
-<h2 id="yay-for-of-loops-">Yay for/of loops!</h2>
+<h2 id="solving-the-pull-push-conundrum">Solving the pull/push conundrum</h2>
 <p>Compare these two ways of looping an array:</p>
 <pre><code class="lang-js">for (var i=0; i&lt;arr.length; i++) {
   var value = arr[i];
@@ -57,22 +121,14 @@ for (var value of arr) {
 <li>We don&#39;t need to worry about when to end the loop.</li>
 <li>We don&#39;t need to know any specifics about the data structure.</li>
 </ul>
-<p>In other words, for/of retains the benefits of the pull model, while also gaining many of the benefits of the push model.</p>
-<h2 id="lots-of-things-are-for-of-able">Lots of things are for/of-able</h2>
-<p>Above, we used for/of to loop an array. Other things you can for/of include:</p>
-<ul>
-<li>key/value entries in a <code>Map</code>.</li>
-<li>items in a <code>Set</code>.</li>
-<li>characters in a string.</li>
-<li>args in an <code>arguments</code> object.</li>
-<li>DOM elements gotten from <code>document.querySelectorAll()</code> or <code>elmt.getElementsByClassName()</code>.</li>
-</ul>
-<p>Okay so for/of is rad and we like it. But this raises the question: what makes something for/of-able? Do only built-in objects have this ability, or could our binary search tree from the last chapter also be for/of&#39;d? That&#39;s where ES6 iterators come in, and it&#39;s the topic of the next chapter.</p>
+<p>In other words, for/of retains the benefits of pull mode, while also gaining the benefits of push mode.</p>
+<h2 id="what-makes-something-for-of-able-">What makes something for/of-able?</h2>
+<p>Above, we used for/of to loop an array, but it raises the question: what makes something for/of-able? Do only arrays have this ability, or could our binary search tree from the last chapter also be for/of&#39;d? That&#39;s where ES6 iterators come in, and it&#39;s the topic of the next chapter.</p>
 <hr>
 <p><strong><a href="./03-iterators.html">Next: Chapter III: Iterators →</a></strong></p>
 <hr>
 <ul>
-<li><a href="./00-intro.html">Intro: Generators from the ground up</a></li>
+<li><a href="./00-intro.html">The Yin-Yang of Generators and Iterators</a></li>
 <li><a href="./01-pull-push.html">Chapter I: The pull/push conundrum</a></li>
 <li><strong>Chapter II: The for/of loop</strong></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>

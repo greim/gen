@@ -13,17 +13,17 @@ Fundamentally, iterators are an abstract way to represent a sequence. Before ES6
  1. **Open-ended sequences**: Sometimes it's useful to model *infinite or ridiculously long sequences*. For example, the set of all positive integers.
  2. **Lazy sequences**: Sometimes it's useful to model lazy sequences, which don't have a value until the moment the consumer asks for it. This can save both memory and CPU cycles.
 
-Iterators have no problem with the above, due to how they separate concerns around a common *protocol*. The protocol defines the minimal operations needed in order to iterate a sequence: 1) what's the next thing? and 2) is it done yet?
+Iterators have no problem with the above, due to how they separate concerns around a protocol defining the minimum operations for sequence traversal: A) what's the next thing? and B) are we done yet?
 
-As long as you implement the protocol, you—the producer—can model a sequence however you want. As long as you call into the protocol, you—the consumer—are free to decide when to iterate and whether to bail out of the iteration.
+As long as you implement this minimal protocol, you—the producer—are free to model a sequence however you want. As long as you adhere to this protocol, you—the consumer—are free to decide when to iterate and whether to bail out of the iteration.
 
-Finally, because it's defined in the language, language-level hooks exist that make calling into the protocol simple via the for/of loop, and implementing the protocol simple via generators. But we're getting ahead of ourselves! First let's look at how these protocols work. There are actually two concepts—and two protocols—involved.
+Finally, because it's defined in the language, language-level hooks exist that make working with iterators ultra-simple. On the consumer side, this is the for/of loop. On the producer side, it's generators. But we're getting ahead of ourselves! First let's look at how these protocols work. There are actually two concepts in play—iterables and iterators—each with its own protocol.
 
 ## Concept: Iterables
 
-An *iterable* is any object that implements the *iterable protocol*. Among other things, any iterable can be for/of'd.
+Informally, an *iterable* is any object that can be for/of'd. Technically, an iterable is an object that implements the *iterable protocol*.
 
-**The iterable protocol:** To implement the iterable protocol, an object must have a `[Symbol.iterator]` property which is a function that receives no arguments and returns an *iterator*. ([Read more about symbols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol).)
+**The iterable protocol:** To implement the iterable protocol, an object must have a [[Symbol.iterator]](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) property which is a function that receives no arguments and returns an *iterator*.
 
 ## Concept: Iterators
 
