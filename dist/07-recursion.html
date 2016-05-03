@@ -44,21 +44,14 @@ while (queue.length &gt; 0) {
 }
 </code></pre>
 <p>This technique works, but ignores the innate sorting properties of binary search trees. To fix this, we want to switch to <a href="https://en.wikipedia.org/wiki/Tree_traversal#In-order">in-order iteration</a>. An easy way to do that is to use recursion, which means our generator will have to call itself.</p>
-<p>The way our tree works is that we have a <code>Tree</code> class and an inner <code>Node</code> class. Instances of <code>Tree</code> have a root which is undefined if the tree is empty. Otherwise, it&#39;s an instance of <code>Node</code>, which in turn can have left and right children, themselves instances of <code>Node</code>, and so on.</p>
-<pre><code>tree (Tree)
-└──root (Node)
-   ├──value: 5
-   ├──left (Node)
-   │  ├──value: 3
-   │  ├──left (Node)
-   │  │  ├──value: 2
-   │  │  ├──left (undefined)
-   │  │  └──right (undefined)
-   │  └──right (undefined)
-   └──right (Node)
-      ├──value: 7
-      ├──left (undefined)
-      └──right (undefined)
+<p>The way our tree works is that we have a <code>Tree</code> class and an inner <code>Node</code> class. Instances of <code>Tree</code> have a root which is null if the tree is empty. Otherwise, it&#39;s an instance of <code>Node</code>, which in turn can have left and right children, themselves instances of <code>Node</code>, and so on.</p>
+<pre><code>           tree
+            |
+          node:9
+         /      \
+    node:4      node:11
+    /   \        /    \
+null   node:6  null   null
 </code></pre><h2 id="adding-recursion-to-a-generator-attempt-one">Adding recursion to a generator: attempt one</h2>
 <p>We&#39;ll make both <code>Tree</code> and <code>Node</code> iterable, and have <code>Tree</code> delegate to its root <code>Node</code>, if it exists. Then the root will recursively delegate to its left and right children, if they exist, etc.</p>
 <pre><code class="lang-js">class Tree {

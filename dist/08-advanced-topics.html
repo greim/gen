@@ -41,6 +41,18 @@ for (const val of collection) {
   collection.remove(val);
 }
 </code></pre>
+<h2 id="pojos-aren-t-iterable">POJOs aren&#39;t iterable</h2>
+<p>Given that you can for/in loop over keys in a plain old JavaScript object (POJO), you could be forgiven for thinking POJOs are iterable. Well, <a href="http://exploringjs.com/es6/ch_iteration.html#sec_plain-objects-not-iterable">they&#39;re not</a>. You can use a Map instead, or a write yourself a utility generator function.</p>
+<pre><code class="lang-js">function* iterObj(ob) {
+  for (let key in ob) {
+    if (ob.hasOwnProperty(key)) {
+      yield [ key, ob[key] ];
+    }
+  }
+}
+
+for (const [ key, val ] of obj) { ... }
+</code></pre>
 <h2 id="functional-programming-over-sequences">Functional programming over sequences</h2>
 <p>Considering that iteration introduces a conceptual shift from <em>collections</em> to <em>abstract sequences</em>, collection-oriented libraries like lodash start to seem incomplete. Operations like map, filter, and reduce can just as easily operate on infinite or lazy sequences, for example. The <a href="https://fitzgen.github.io/wu.js/">wu library</a> offers these kinds of capabilities, and can be thought of as &quot;lodash for iterators&quot;:</p>
 <pre><code class="lang-js">const evenSquares = wu(range(0, Infinity))

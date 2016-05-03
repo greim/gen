@@ -33,19 +33,15 @@ setSize();
 <li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
 <h2 id="looping-collections">Looping collections</h2>
-<p>We&#39;ll kick things off by considering ways to loop through two common data structures: trees and lists.</p>
-<ul>
-<li><strong>Lists</strong>: In a list, everything exists sequentially in a line, so looping is easy.</li>
-<li><strong>Trees</strong>: A tree has a non-linear branching structure, so looping it isn&#39;t so easy.</li>
-</ul>
-<p>Terminology note: when you loop through a collection, we&#39;ll say that you&#39;re the <em>consumer</em>, while the collection is the <em>producer</em>.</p>
-<h2 id="the-pull-model">The pull model</h2>
-<p>So then, suppose we have a <code>list</code> and a <code>tree</code> variable, which we&#39;ll consume using the pull model. Think of the pull model as &quot;I&#39;ll call you.&quot; In other words, <em>the consumer is in charge</em> of pulling things out:</p>
+<p>We&#39;ll kick things off by considering two common data structures: trees and lists. In a list, everything exists sequentially in a line, so looping is easy. A tree has a non-linear branching structure, so looping it isn&#39;t so straightforward.</p>
+<p><em>Terminology note: when you loop through a collection, we&#39;ll say that you&#39;re the consumer, while the collection is the producer.</em></p>
+<h2 id="pull-mode">Pull mode</h2>
+<p>We&#39;ll consume our tree and list in pull mode. Think of pull as &quot;I&#39;ll call you.&quot; In other words, the consumer is in charge of pulling things out:</p>
 <pre><code class="lang-js">for (var i=0; i&lt;list.length; i++) {
   visit(list[i]);
 }
 </code></pre>
-<p>Consuming the tree is harder, since how do you loop a non-linear thing? Let&#39;s assume it&#39;s a <a href="https://en.wikipedia.org/wiki/Binary_search_tree">binary search tree</a>. A bit of googling turns up an algorithm we can use:</p>
+<p>Consuming the tree isn&#39;t quite as easy. Let&#39;s assume it&#39;s a <a href="https://en.wikipedia.org/wiki/Binary_search_tree">binary search tree</a>. A bit of googling turns up an algorithm we can use:</p>
 <pre><code class="lang-js">var queue = tree.root ? [tree.root] : [];
 while (queue.length &gt; 0) {
   var node = queue.shift();
@@ -54,15 +50,15 @@ while (queue.length &gt; 0) {
   if (node.right) { queue.push(node.right); }
 }
 </code></pre>
-<p>It would be annoying to have to type out this this pile of code every time I want to loop a tree, but since this is the pull model and I&#39;m in charge, the responsibility falls to me.</p>
-<h2 id="the-push-model">The push model</h2>
-<p>If you&#39;re familiar with JavaScript, you&#39;re probably thinking there are much better ways to do this, and you&#39;re right! Let&#39;s switch to the push model, AKA &quot;you call me.&quot; In the push model, <em>the producer is in charge</em> by providing an <code>each()</code> method that accepts a callback, which it uses to push values back at us. Let&#39;s assume both our list and our tree have such a method. Suddenly everything&#39;s a lot easier:</p>
+<p>It would be annoying to have to type out this this pile of code every time I want to loop a tree, but it gets the job done.</p>
+<h2 id="push-mode">Push mode</h2>
+<p>If you&#39;re familiar with JavaScript, you&#39;re probably thinking there are better ways to do this. Let&#39;s switch to push mode—AKA &quot;you call me&quot;—in which the producer is in charge. The collection has an <code>each()</code> method that accepts a callback, which it uses to push values back at us. This makes everything easier:</p>
 <pre><code class="lang-js">list.each(elmt =&gt; visit(elmt));
 tree.each(elmt =&gt; visit(elmt));
 </code></pre>
-<p>Not only have we written less code, but the messy details are encapsulated away from us, which is a great separation of concerns.</p>
+<p>The messy details still exist in the implementations of those <code>each()</code> methods, but they&#39;re are encapsulated away from us, which is a great separation of concerns.</p>
 <h2 id="unfortunate-tradeoffs">Unfortunate tradeoffs</h2>
-<p>So the push model wins, right? Sadly, in the process of switching from pull to push, we lost some power and flexibility:</p>
+<p>So push mode wins, right? Sadly, by switching from pull to push, we lost some power and flexibility:</p>
 <ul>
 <li>We can&#39;t <code>return</code> the outer function from inside a callback.</li>
 <li>We can&#39;t <code>break</code> or <code>continue</code> from inside a callback.</li>

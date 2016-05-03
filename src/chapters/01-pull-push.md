@@ -4,16 +4,13 @@
 
 ## Looping collections
 
-We'll kick things off by considering ways to loop through two common data structures: trees and lists.
+We'll kick things off by considering two common data structures: trees and lists. In a list, everything exists sequentially in a line, so looping is easy. A tree has a non-linear branching structure, so looping it isn't so straightforward.
 
- * **Lists**: In a list, everything exists sequentially in a line, so looping is easy.
- * **Trees**: A tree has a non-linear branching structure, so looping it isn't so easy.
+*Terminology note: when you loop through a collection, we'll say that you're the consumer, while the collection is the producer.*
 
-Terminology note: when you loop through a collection, we'll say that you're the *consumer*, while the collection is the *producer*.
+## Pull mode
 
-## The pull model
-
-So then, suppose we have a `list` and a `tree` variable, which we'll consume using the pull model. Think of the pull model as "I'll call you." In other words, *the consumer is in charge* of pulling things out:
+We'll consume our tree and list in pull mode. Think of pull as "I'll call you." In other words, the consumer is in charge of pulling things out:
 
 ```js
 for (var i=0; i<list.length; i++) {
@@ -21,7 +18,7 @@ for (var i=0; i<list.length; i++) {
 }
 ```
 
-Consuming the tree is harder, since how do you loop a non-linear thing? Let's assume it's a [binary search tree](https://en.wikipedia.org/wiki/Binary_search_tree). A bit of googling turns up an algorithm we can use:
+Consuming the tree isn't quite as easy. Let's assume it's a [binary search tree](https://en.wikipedia.org/wiki/Binary_search_tree). A bit of googling turns up an algorithm we can use:
 
 ```js
 var queue = tree.root ? [tree.root] : [];
@@ -33,22 +30,22 @@ while (queue.length > 0) {
 }
 ```
 
-It would be annoying to have to type out this this pile of code every time I want to loop a tree, but since this is the pull model and I'm in charge, the responsibility falls to me.
+It would be annoying to have to type out this this pile of code every time I want to loop a tree, but it gets the job done.
 
-## The push model
+## Push mode
 
-If you're familiar with JavaScript, you're probably thinking there are much better ways to do this, and you're right! Let's switch to the push model, AKA "you call me." In the push model, *the producer is in charge* by providing an `each()` method that accepts a callback, which it uses to push values back at us. Let's assume both our list and our tree have such a method. Suddenly everything's a lot easier:
+If you're familiar with JavaScript, you're probably thinking there are better ways to do this. Let's switch to push mode—AKA "you call me"—in which the producer is in charge. The collection has an `each()` method that accepts a callback, which it uses to push values back at us. This makes everything easier:
 
 ```js
 list.each(elmt => visit(elmt));
 tree.each(elmt => visit(elmt));
 ```
 
-Not only have we written less code, but the messy details are encapsulated away from us, which is a great separation of concerns.
+The messy details still exist in the implementations of those `each()` methods, but they're are encapsulated away from us, which is a great separation of concerns.
 
 ## Unfortunate tradeoffs
 
-So the push model wins, right? Sadly, in the process of switching from pull to push, we lost some power and flexibility:
+So push mode wins, right? Sadly, by switching from pull to push, we lost some power and flexibility:
 
  * We can't `return` the outer function from inside a callback.
  * We can't `break` or `continue` from inside a callback.

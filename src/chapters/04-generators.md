@@ -32,7 +32,7 @@ while (queue.length > 0) {
 }
 ```
 
-Down in the guts of this tree-traversal algorithm, there's a point where we have the value in-hand. But since iteration is a pull model where the consumer decides when to access each value, we can't just let the loop run to completion. We have to hand off a value, then *suspend* the loop mid-flight and wait... somehow.
+Down in the guts of this tree-traversal algorithm, there's a point where we have the value in-hand. But we can't just let the loop run to completion. We have to hand off a value, then *suspend* the loop mid-flight and wait... somehow.
 
 ## The solution
 
@@ -55,7 +55,7 @@ class Tree {
 }
 ```
 
-Because a generator returns an iterator, we've satisfied the iterable protocol and we can consume our tree:
+As far as the outside world is concerned, a generator is merely a function that returns an iterator. Because of this, we've satisfied the iterable protocol and we can consume our tree:
 
 ```js
 for (const value of tree) { ... }
@@ -63,7 +63,7 @@ for (const value of tree) { ... }
 
 ## Okay, but *how* do generators work?
 
-Essentially, what happens is that when the `*[Symbol.iterator]` generator function is called, instead of running our algorithm to completion, JavaScript puts it into a *paused* state, without running it.
+Essentially, what happens is that when the `*[Symbol.iterator]` function is called, instead of running our algorithm to completion, JavaScript puts it into a *paused* state, without running it.
 
 Meanwhile, JavaScript returns an iterator "`itr`" to the caller. When `itr.next()` is called, JavaScript presses *play* on the algorithm, which runs right up until the point it encounters a `yield`, then pauses again. The yielded value is subsequently returned from `itr.next()` along with `done: false`.
 
@@ -77,7 +77,7 @@ This happens anywhere between zero and infinity times. If/when the generator alg
 { value: /* whatever was returned */, done: true }
 ```
 
-**Note:** to the outside world, there's no discernible difference between a function that returns an iterator and a generator function. If you ever find yourself in a situation where you need to know whether a function is a generator, consider instead just inspecting the return value.
+**Note:** to the outside world, there's no discernible difference between a function that returns an iterator and a generator function. If you ever find yourself in a situation where you need to know whether a function is a generator, consider instead just inspecting the return value to see if it's an iterator.
 
 ----------------
 

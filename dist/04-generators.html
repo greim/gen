@@ -58,7 +58,7 @@ while (queue.length &gt; 0) {
   if (node.right) { queue.push(node.right); }
 }
 </code></pre>
-<p>Down in the guts of this tree-traversal algorithm, there&#39;s a point where we have the value in-hand. But since iteration is a pull model where the consumer decides when to access each value, we can&#39;t just let the loop run to completion. We have to hand off a value, then <em>suspend</em> the loop mid-flight and wait... somehow.</p>
+<p>Down in the guts of this tree-traversal algorithm, there&#39;s a point where we have the value in-hand. But we can&#39;t just let the loop run to completion. We have to hand off a value, then <em>suspend</em> the loop mid-flight and wait... somehow.</p>
 <h2 id="the-solution">The solution</h2>
 <p>It turns out that <em>suspending and waiting</em> is exactly what generators do. The mechanics of this are discussed in more detail below, but let&#39;s just jump right to the solution.</p>
 <p>First, we declare <code>[Symbol.iterator]</code> as a generator by adding an asterisk <code>*</code>. Then we drop our algorithm in wholesale. Finally, we hand off the value using a <code>yield</code> expression.</p>
@@ -75,18 +75,18 @@ while (queue.length &gt; 0) {
   }
 }
 </code></pre>
-<p>Because a generator returns an iterator, we&#39;ve satisfied the iterable protocol and we can consume our tree:</p>
+<p>As far as the outside world is concerned, a generator is merely a function that returns an iterator. Because of this, we&#39;ve satisfied the iterable protocol and we can consume our tree:</p>
 <pre><code class="lang-js">for (const value of tree) { ... }
 </code></pre>
 <h2 id="okay-but-how-do-generators-work-">Okay, but <em>how</em> do generators work?</h2>
-<p>Essentially, what happens is that when the <code>*[Symbol.iterator]</code> generator function is called, instead of running our algorithm to completion, JavaScript puts it into a <em>paused</em> state, without running it.</p>
+<p>Essentially, what happens is that when the <code>*[Symbol.iterator]</code> function is called, instead of running our algorithm to completion, JavaScript puts it into a <em>paused</em> state, without running it.</p>
 <p>Meanwhile, JavaScript returns an iterator &quot;<code>itr</code>&quot; to the caller. When <code>itr.next()</code> is called, JavaScript presses <em>play</em> on the algorithm, which runs right up until the point it encounters a <code>yield</code>, then pauses again. The yielded value is subsequently returned from <code>itr.next()</code> along with <code>done: false</code>.</p>
 <pre><code class="lang-js">{ value: /* whatever was yielded */, done: false }
 </code></pre>
 <p>This happens anywhere between zero and infinity times. If/when the generator algorithm hits a <code>return</code> instead of a <code>yield</code> (the return can be either implicit or explicit) the returned value is returned from <code>itr.next()</code> along with <code>done: true</code>.</p>
 <pre><code class="lang-js">{ value: /* whatever was returned */, done: true }
 </code></pre>
-<p><strong>Note:</strong> to the outside world, there&#39;s no discernible difference between a function that returns an iterator and a generator function. If you ever find yourself in a situation where you need to know whether a function is a generator, consider instead just inspecting the return value.</p>
+<p><strong>Note:</strong> to the outside world, there&#39;s no discernible difference between a function that returns an iterator and a generator function. If you ever find yourself in a situation where you need to know whether a function is a generator, consider instead just inspecting the return value to see if it&#39;s an iterator.</p>
 <hr>
 <p><strong><a href="./05-polymorphic-iterators.html">Next: Chapter V: Polymorphic iterators →</a></strong></p>
 <hr>

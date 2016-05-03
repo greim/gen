@@ -50,3 +50,6 @@ a[href] {
   font-style:italic;
   font-weight:100;
 }
+img {
+  max-width: 100%;
+}

@@ -19,23 +19,16 @@ while (queue.length > 0) {
 
 This technique works, but ignores the innate sorting properties of binary search trees. To fix this, we want to switch to [in-order iteration](https://en.wikipedia.org/wiki/Tree_traversal#In-order). An easy way to do that is to use recursion, which means our generator will have to call itself.
 
-The way our tree works is that we have a `Tree` class and an inner `Node` class. Instances of `Tree` have a root which is undefined if the tree is empty. Otherwise, it's an instance of `Node`, which in turn can have left and right children, themselves instances of `Node`, and so on.
+The way our tree works is that we have a `Tree` class and an inner `Node` class. Instances of `Tree` have a root which is null if the tree is empty. Otherwise, it's an instance of `Node`, which in turn can have left and right children, themselves instances of `Node`, and so on.
 
 ```
-tree (Tree)
-└──root (Node)
-   ├──value: 5
-   ├──left (Node)
-   │  ├──value: 3
-   │  ├──left (Node)
-   │  │  ├──value: 2
-   │  │  ├──left (undefined)
-   │  │  └──right (undefined)
-   │  └──right (undefined)
-   └──right (Node)
-      ├──value: 7
-      ├──left (undefined)
-      └──right (undefined)
+           tree
+            |
+          node:9
+         /      \
+    node:4      node:11
+    /   \        /    \
+null   node:6  null   null
 ```
 
 ## Adding recursion to a generator: attempt one
