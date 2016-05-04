@@ -2,7 +2,7 @@
 
 {{ toc }}
 
-## Introducing *iterators*
+## Introducing iterators
 
 In the previous chapter, we learned how the for/of loop retains the powers of pull mode, while gaining powers of push mode. But to understand why that's the case, we have to look at iterators.
 
@@ -13,15 +13,15 @@ Fundamentally, iterators are an abstract way to represent a sequence. Before ES6
  1. **Open-ended sequences**: Sometimes it's useful to model *infinite or ridiculously long sequences*. For example, the set of all positive integers.
  2. **Lazy sequences**: Sometimes it's useful to model lazy sequences, which don't have a value until the moment the consumer asks for it. This can save both memory and CPU cycles.
 
-Iterators have no problem with the above, due to how they separate concerns around a protocol defining the minimum operations for sequence traversal: A) what's the next thing? and B) are we done yet?
+Iterators have no problem with the above, because they define a protocol comprising the *minimum* operations for sequence traversal: A) what's the next thing? and B) are we done yet?
 
-As long as you implement this minimal protocol, you—the producer—are free to model a sequence however you want. As long as you adhere to this protocol, you—the consumer—are free to decide when to iterate and whether to bail out of the iteration.
+By establishing a set of minimal rules everyone agrees to follow, the protocol establishes separation of concerns. As long as you—the producer—implement the protocol, you're free to model a sequence however you want. As long as you—the consumer—adhere to this protocol, you're free to decide when to iterate and whether to bail out of the iteration.
 
 Finally, because it's defined in the language, language-level hooks exist that make working with iterators ultra-simple. On the consumer side, this is the for/of loop. On the producer side, it's generators. But we're getting ahead of ourselves! First let's look at how these protocols work. There are actually two concepts in play—iterables and iterators—each with its own protocol.
 
 ## Concept: Iterables
 
-Informally, an *iterable* is any object that can be for/of'd. Technically, an iterable is an object that implements the *iterable protocol*.
+Any *iterable* can (among other things) be for/of'd. Technically, an iterable is an object that implements the *iterable protocol*.
 
 **The iterable protocol:** To implement the iterable protocol, an object must have a [[Symbol.iterator]](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) property which is a function that receives no arguments and returns an *iterator*.
 
@@ -33,7 +33,7 @@ An *iterator* is any object that implements the *iterator protocol*. It's transi
 
 ## Iteration protocols in action
 
-To illustrate the above, let's create an iterator from an array and then deplete it. (If you're using a modern browser, feel free to paste this code in your console and try it out.)
+Okay then, enough theory. Let's actually create an iterator from an array and then deplete it. (If you're using a modern browser, feel free to paste this code in your console and try it out.)
 
 ```js
 // arrays are iterables, so let's create one
@@ -76,7 +76,7 @@ for (var n of array) {
 In the above, we used an array, which is a native object that's iterable. Next, let's try making our own objects iterable. We'll have a `range()` function that returns an iterable representing a finite sequence of numbers. Our goal is to be able to do this:
 
 ```js
-for (var n of range(3, 5)) { ... }
+for (var n of range(3, 6)) { ... } // visits 3, 4, 5
 ```
 
 Here's the code:
@@ -91,7 +91,7 @@ function range(from, to) {
     // implement iterator protocol
     iterator.next = function() {
       var value = i++;
-      var done = to > value;
+      var done = value >= to;
       if (done) value = undefined;
       return { value, done };
     };
@@ -101,7 +101,7 @@ function range(from, to) {
 }
 ```
 
-Ugh, that was tedious to type out, and it's even more tedious to read. I'd probably avoid making iterators if it required doing this sort of thing regularly. But all of that aside, it works!
+This is a bit ugly, but never mind that for now. Feel free to try it out in your browser console.
 
 ## Making our own iterable, round two
 

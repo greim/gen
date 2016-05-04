@@ -96,7 +96,7 @@ setSize();
 <li><a href="./07-recursion.html">Chapter VII: Delegation and recursion</a></li>
 <li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
-<h2 id="a-rabbit-hole">A rabbit hole</h2>
+<h2 id="a-plot-twist">A plot twist</h2>
 <p>Having covered the basics of iteration and generators, we now take a break in order to go down a small rabbit-hole.</p>
 <p>Recall that iterators and iterables are separate things. Well, plot twist: Pretty much every <em>native</em> JavaScript iterator object implements the iterable protocol by having a <code>[Symbol.iterator]</code> method which returns itself. In effect, most iterators are both iterators and iterables, simultaneously!</p>
 <h2 id="possibly-confusing-but-useful">Possibly confusing, but useful</h2>
@@ -107,9 +107,13 @@ setSize();
 <h2 id="what-does-this-mean-for-you-">What does this mean for you?</h2>
 <p>This shakes out in a number of ways in practice.</p>
 <h3 id="always-deal-in-iterables">Always deal in iterables</h3>
-<p>It&#39;s generally a good idea to structure your programs to always accept iterables, never iterators specifically. Along those lines, you should almost never be explicitly calling <code>[Symbol.iterator]()</code> and <code>iterator.next()</code>. Let for/of and other language-level constructs handle that for you. That way, no matter whether an iterable or iterator is passed to your program, as long as you treat it as an iterable, you&#39;re covered.</p>
+<p>It&#39;s generally a good idea to structure your programs to always deal in iterables, not iterators. Along those lines, you should almost never be explicitly calling <code>[Symbol.iterator]()</code> and <code>iterator.next()</code>. Let for/of and other language-level constructs handle that for you. That way, no matter whether an iterable or iterator is passed to your program, as long as you treat it as an iterable, you&#39;re covered.</p>
 <h3 id="don-t-bother-manually-implementing-the-iterator-protocol">Don&#39;t bother manually implementing the iterator protocol</h3>
-<p>While it&#39;s great to understand the iterator protocol, in the vast majority of cases it&#39;s better to just let generators create them for you. Not only is it easier, but then your iterators can be used wherever iterables are expected.</p>
+<p>While it&#39;s great to understand the iterator protocol, in the vast majority of cases it&#39;s better to just let generators create them for you, because then you get this behavior for free, and your iterators can be used wherever iterables are expected. Plus, generators are <em>sooo</em> much easier to work with. For example, here&#39;s that <code>range()</code> function from two chapters ago, re-implemented as a generator:</p>
+<pre><code class="lang-js">function* range(from, to) {
+  for (let i=from; i&lt;to; i++) yield i;
+}
+</code></pre>
 <h3 id="avoid-double-consuming-an-iterator">Avoid double-consuming an iterator</h3>
 <p>Iterators are <em>unicast</em> by design, meaning that when one consumer pulls out a value, no other consumer will ever see it. Thus, even though you&#39;ve structured your code to deal exclusively in iterables, you&#39;re still sort of on the hook to know which things are actually iterators.</p>
 <pre><code class="lang-js">var keys1 = Object.keys(obj); // iterable

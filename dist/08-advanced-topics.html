@@ -115,27 +115,28 @@ for (const val of collection) {
   }
 }
 
-for (const [ key, val ] of obj) { ... }
+for (const [ key, val ] of iterObj(obj)) { ... }
 </code></pre>
 <h2 id="the-generator-sniff-antipattern">The generator sniff antipattern</h2>
-<p>If you work with generators much, eventually you&#39;ll find yourself thinking, &quot;it sure would be handy to detect whether this function is a generator.&quot; While it may be possible to exploit various quirks of your local JavaScript engine to sniff out a generator, the intent is that, to the outside world, generators should be indistinguishable from normal functions that return iterators. For example, suppose you have a function that accepts a callback:</p>
-<pre><code class="lang-js">function foo(gen) {
-  if (!isGenerator(gen)) {
+<p>If you work with generators much, eventually you&#39;ll find yourself thinking, &quot;it sure would be handy to detect whether this function is a generator.&quot; Don&#39;t do it!</p>
+<p>While it may be possible to exploit various quirks of your local JavaScript engine to sniff out a generator, the intent is that, to the outside world, generators should be indistinguishable from normal functions that return iterators. For example, suppose you have a function that accepts a callback:</p>
+<pre><code class="lang-js">function runGenerator(generator) {
+  if (!isGenerator(generator)) {
     throw new Error(&#39;requires a generator!&#39;);
   } else {
-    for (const x of gen()) { ... }
+    for (const x of generator()) { ... }
   }
 }
 
 // intended usage
-foo(function*() { ... });
+runGenerator(function*() { ... });
 </code></pre>
-<p>That would break for this perfectly legitimate use case, since <code>Function#bind()</code> returns a different function:</p>
-<pre><code class="lang-js">foo(function*() { ... }.bind(this));
+<p>That would break for this perfectly legitimate use case, since <code>Function#bind()</code> returns a new function:</p>
+<pre><code class="lang-js">runGenerator(function*() { ... }.bind(this));
 </code></pre>
 <p>If you need to do some sort of validation, consider instead just inspecting the return value of the function:</p>
-<pre><code class="lang-js">function foo(gen) {
-  var itr = gen();
+<pre><code class="lang-js">function runGenerator(generator) {
+  var itr = generator();
   if (!isIterator(itr)) {
     throw new Error(&#39;must return an iterator!&#39;);
   } else {

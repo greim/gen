@@ -30,37 +30,39 @@ function* iterObj(ob) {
   }
 }
 
-for (const [ key, val ] of obj) { ... }
+for (const [ key, val ] of iterObj(obj)) { ... }
 ```
 
 ## The generator sniff antipattern
 
-If you work with generators much, eventually you'll find yourself thinking, "it sure would be handy to detect whether this function is a generator." While it may be possible to exploit various quirks of your local JavaScript engine to sniff out a generator, the intent is that, to the outside world, generators should be indistinguishable from normal functions that return iterators. For example, suppose you have a function that accepts a callback:
+If you work with generators much, eventually you'll find yourself thinking, "it sure would be handy to detect whether this function is a generator." Don't do it!
+
+While it may be possible to exploit various quirks of your local JavaScript engine to sniff out a generator, the intent is that, to the outside world, generators should be indistinguishable from normal functions that return iterators. For example, suppose you have a function that accepts a callback:
 
 ```js
-function foo(gen) {
-  if (!isGenerator(gen)) {
+function runGenerator(generator) {
+  if (!isGenerator(generator)) {
     throw new Error('requires a generator!');
   } else {
-    for (const x of gen()) { ... }
+    for (const x of generator()) { ... }
   }
 }
 
 // intended usage
-foo(function*() { ... });
+runGenerator(function*() { ... });
 ```
 
-That would break for this perfectly legitimate use case, since `Function#bind()` returns a different function:
+That would break for this perfectly legitimate use case, since `Function#bind()` returns a new function:
 
 ```js
-foo(function*() { ... }.bind(this));
+runGenerator(function*() { ... }.bind(this));
 ```
 
 If you need to do some sort of validation, consider instead just inspecting the return value of the function:
 
 ```js
-function foo(gen) {
-  var itr = gen();
+function runGenerator(generator) {
+  var itr = generator();
   if (!isIterator(itr)) {
     throw new Error('must return an iterator!');
   } else {

@@ -2,7 +2,7 @@
 
 {{ toc }}
 
-## A rabbit hole
+## A plot twist
 
 Having covered the basics of iteration and generators, we now take a break in order to go down a small rabbit-hole.
 
@@ -24,11 +24,17 @@ This shakes out in a number of ways in practice.
 
 ### Always deal in iterables
 
-It's generally a good idea to structure your programs to always accept iterables, never iterators specifically. Along those lines, you should almost never be explicitly calling `[Symbol.iterator]()` and `iterator.next()`. Let for/of and other language-level constructs handle that for you. That way, no matter whether an iterable or iterator is passed to your program, as long as you treat it as an iterable, you're covered.
+It's generally a good idea to structure your programs to always deal in iterables, not iterators. Along those lines, you should almost never be explicitly calling `[Symbol.iterator]()` and `iterator.next()`. Let for/of and other language-level constructs handle that for you. That way, no matter whether an iterable or iterator is passed to your program, as long as you treat it as an iterable, you're covered.
 
 ### Don't bother manually implementing the iterator protocol
 
-While it's great to understand the iterator protocol, in the vast majority of cases it's better to just let generators create them for you. Not only is it easier, but then your iterators can be used wherever iterables are expected.
+While it's great to understand the iterator protocol, in the vast majority of cases it's better to just let generators create them for you, because then you get this behavior for free, and your iterators can be used wherever iterables are expected. Plus, generators are *sooo* much easier to work with. For example, here's that `range()` function from two chapters ago, re-implemented as a generator:
+
+```js
+function* range(from, to) {
+  for (let i=from; i<to; i++) yield i;
+}
+```
 
 ### Avoid double-consuming an iterator
 

@@ -97,15 +97,14 @@ setSize();
 <li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
 <h2 id="looping-collections">Looping collections</h2>
-<p>We&#39;ll kick things off by considering two common data structures: trees and lists. In a list, everything exists sequentially in a line, so looping is easy. A tree has a non-linear branching structure, so looping it isn&#39;t so straightforward.</p>
-<p><em>Terminology note: when you loop through a collection, we&#39;ll say that you&#39;re the consumer, while the collection is the producer.</em></p>
+<p>We&#39;ll kick things off by looping two kinds of data structures: trees and arrays. In an array, everything exists sequentially in a line, so looping is easy. A tree has a non-linear branching structure, so looping it isn&#39;t so straightforward. Also, terminology note: when you loop through a collection, we&#39;ll say that you&#39;re the <strong>consumer</strong>, while the collection is the <strong>producer</strong>.</p>
 <h2 id="pull-mode">Pull mode</h2>
-<p>As chunks of data are transferred from producer to consumer, &quot;pull mode&quot; just means that the consumer initiates each transfer, while the producer simply waits to be read from. It might sound complicated, but all it is is this:</p>
-<pre><code class="lang-js">for (var i=0; i&lt;list.length; i++) {
-  visit(list[i]);
+<p>As data flows from producer to consumer, &quot;pull mode&quot; just means that the consumer initiates the transfer at each step, while the producer more or less acts like an inert data structure that can be read from. It might sound complicated, but all it means is this:</p>
+<pre><code class="lang-js">for (var i=0; i&lt;array.length; i++) {
+  visit(array[i]);
 }
 </code></pre>
-<p>Consuming a tree in pull mode is slightly more complicated. Let&#39;s assume it&#39;s a <a href="https://en.wikipedia.org/wiki/Binary_search_tree">binary search tree</a>. A bit of googling turns up an algorithm we can use:</p>
+<p>Looping the array was fairly easy. Looping a tree is slightly more complicated. Let&#39;s assume it&#39;s a <a href="https://en.wikipedia.org/wiki/Binary_search_tree">binary search tree</a>. A bit of googling turns up an algorithm we can use:</p>
 <pre><code class="lang-js">var queue = tree.root ? [tree.root] : [];
 while (queue.length &gt; 0) {
   var node = queue.shift();
@@ -114,13 +113,13 @@ while (queue.length &gt; 0) {
   if (node.right) { queue.push(node.right); }
 }
 </code></pre>
-<p>It would be annoying to have to type out this pile of code every time I want to loop a tree, but since I&#39;m the one initiating the transfer, the task falls to me.</p>
+<p>It would be annoying to have to type out this pile of code every time I want to loop a tree, but since I&#39;m initiating the transfer, the task falls to me.</p>
 <h2 id="push-mode">Push mode</h2>
-<p>Which raises the question: why should I be the one to initiate the transfers? Why not let producer do it? Hence push mode, in which the collection has an <code>each()</code> method that accepts a callback, which it uses to push values to us.</p>
-<pre><code class="lang-js">list.each(elmt =&gt; visit(elmt));
-tree.each(elmt =&gt; visit(elmt));
+<p>Which raises the question: why should I initiate the transfer? Why not let producer do it? Hence push mode, in which the collection has a <code>forEach()</code> method that accepts a callback, which it uses to <em>push</em> values to us.</p>
+<pre><code class="lang-js">array.forEach(elmt =&gt; visit(elmt));
+tree.forEach(elmt =&gt; visit(elmt));
 </code></pre>
-<p>The messy details still exist in the implementations of the <code>each()</code> method, but they&#39;re encapsulated away from us, which is a great separation of concerns.</p>
+<p>Much better. The various state tracking and algorithmic details are encapsulated away from us inside the <code>forEach()</code> method, which is a great separation of concerns.</p>
 <h2 id="unfortunate-tradeoffs">Unfortunate tradeoffs</h2>
 <p>So push mode wins, right? Sadly, by switching from pull to push, we lost some power and flexibility:</p>
 <ul>
