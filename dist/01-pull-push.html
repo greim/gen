@@ -59,9 +59,9 @@ tree.forEach(elmt =&gt; visit(elmt));
 <h2 id="unfortunate-tradeoffs">Unfortunate tradeoffs</h2>
 <p>So push mode wins, right? Sadly, by switching from pull to push, we lost some power and flexibility:</p>
 <ul>
-<li>We can&#39;t <code>return</code> the outer function from inside a callback.</li>
-<li>We can&#39;t <code>break</code> or <code>continue</code> from inside a callback.</li>
-<li>We can&#39;t <code>yield</code> from within a callback.</li>
+<li>We can&#39;t <code>return</code> the outer function from inside the callback.</li>
+<li>We can&#39;t <code>break</code> or <code>continue</code> from inside the callback.</li>
+<li>We can&#39;t <code>yield</code> from within the callback.</li>
 </ul>
 <p>Those behaviors could be simulated using some sort of pre-agreed-upon signaling mechanism between the callback and its runner, but by then we&#39;ve begun to re-invent the wheel, since the language gives us those capabilities for free with loops.</p>
 <hr>

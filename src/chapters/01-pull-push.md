@@ -45,9 +45,9 @@ Much better. The various state tracking and algorithmic details are encapsulated
 
 So push mode wins, right? Sadly, by switching from pull to push, we lost some power and flexibility:
 
- * We can't `return` the outer function from inside a callback.
- * We can't `break` or `continue` from inside a callback.
- * We can't `yield` from within a callback.
+ * We can't `return` the outer function from inside the callback.
+ * We can't `break` or `continue` from inside the callback.
+ * We can't `yield` from within the callback.
 
 Those behaviors could be simulated using some sort of pre-agreed-upon signaling mechanism between the callback and its runner, but by then we've begun to re-invent the wheel, since the language gives us those capabilities for free with loops.
 
