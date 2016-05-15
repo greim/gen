@@ -33,7 +33,7 @@ function* iterObj(ob) {
 for (const [ key, val ] of iterObj(obj)) { ... }
 ```
 
-## The generator sniff antipattern
+## The generator-detection antipattern
 
 If you work with generators much, eventually you'll find yourself thinking, "it sure would be handy to detect whether this function is a generator." Don't do it!
 

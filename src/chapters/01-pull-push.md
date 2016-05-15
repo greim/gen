@@ -4,11 +4,11 @@
 
 ## Looping collections
 
-We'll kick things off by looping two kinds of data structures: trees and arrays. In an array, everything exists sequentially in a line, so looping is easy. A tree has a non-linear branching structure, so looping it isn't so straightforward. Also, terminology note: when you loop through a collection, we'll say that you're the **consumer**, while the collection is the **producer**.
+It all starts with looping. Let's consider two kinds of data structures you can loop through: trees and arrays. In an array, everything exists sequentially in a line, so looping is easy. A tree has a non-linear branching structure, so looping it isn't so straightforward. Also, terminology note: when you loop through a collection, we'll say that you're the **consumer**, while the collection is the **producer**.
 
 ## Pull mode
 
-As data flows from producer to consumer, "pull mode" just means that the consumer initiates the transfer at each step, while the producer more or less acts like an inert data structure that can be read from. It might sound complicated, but all it means is this:
+As data flows from producer to consumer, "pull mode" means that the consumer initiates the transfer, while the producer remains passive:
 
 ```js
 for (var i=0; i<array.length; i++) {
@@ -16,7 +16,7 @@ for (var i=0; i<array.length; i++) {
 }
 ```
 
-Looping the array was fairly easy. Looping a tree is slightly more complicated. Let's assume it's a [binary search tree](https://en.wikipedia.org/wiki/Binary_search_tree). A bit of googling turns up an algorithm we can use:
+Looping the array was fairly easy. Looping a tree is more complicated. Let's assume it's a [binary search tree](https://en.wikipedia.org/wiki/Binary_search_tree). A bit of googling turns up an algorithm we can use:
 
 ```js
 var queue = tree.root ? [tree.root] : [];
@@ -28,11 +28,11 @@ while (queue.length > 0) {
 }
 ```
 
-It would be annoying to have to type out this pile of code every time I want to loop a tree, but since I'm initiating the transfer, the task falls to me.
+That's quite a pile of code to have to memorize and type out just to loop a collection, but since I'm initiating the transfer, the task falls to me.
 
 ## Push mode
 
-Which raises the question: why should I initiate the transfer? Why not let producer do it? Hence push mode, in which the collection has a `forEach()` method that accepts a callback, which it uses to *push* values to us.
+Which raises the question: why should I initiate the transfer? Why not let producer do it? Hence push mode, in which the collection has a `forEach()` method that accepts a callback, which it uses to *push* values to us, while we sit back and passively receive the values.
 
 ```js
 array.forEach(elmt => visit(elmt));

@@ -1,68 +1,4 @@
 <!doctype html>
-<!--
-
-
-
-
-
-
-
-                   `-/oyhmmNMMMMNmmhyo/-`
-               ./ymMMMMMMMMMMMMMMMMMMMMMMmy/.
-            .omMNyohNMMMMMMMMMMMMMMMMMMMMMMMMmo.
-          /dMms- +NMMMMMMMMMMMMMMMMMMMMMMMMMMMMMd/
-        +NMh:  `hMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN+
-      :mMh-    hMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMm:
-    `yMm:     :MMMMMMMMMMMMy:..:yMMMMMMMMMMMMMMMMMMMMMy`
-   .mMh`      sMMMMMMMMMMM+      +MMMMMMMMMMMMMMMMMMMMMm.
-  .mMs        yMMMMMMMMMMM/      /MMMMMMMMMMMMMMMMMMMMMMm.
- `mMy         /MMMMMMMMMMMMs-``-sMMMMMMMMMMMMMMMMMMMMMMMMm`
- yMd           mMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMs
-.MM-           .mMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM.
-sMd             `hMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMs
-mMo               :hMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMm
-MM/                 .+hNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MM/                     .:+oossydNMMMMMMMMMMMMMMMMMMMMMMMMMM
-mMo                               `/yNMMMMMMMMMMMMMMMMMMMMMm
-sMd                                   /mMMMMMMMMMMMMMMMMMMMs
-.MM-                                    oMMMMMMMMMMMMMMMMMM.
- sMd                                     +MMMMMMMMMMMMMMMMs
- `mMs                      `:++:`         yMMMMMMMMMMMMMMm`
-  .mMs                    :NMMMMN:        :MMMMMMMMMMMMMm.
-   .mMh`                  hMMMMMMh        :MMMMMMMMMMMMm.
-    `yMm:                 -dMMMMd-        oMMMMMMMMMMMy`
-      :mMh-                 .::.         .NMMMMMMMMMm:
-        +NMh:                           -NMMMMMMMMN+
-          /dMms-                      `sMMMMMMMMd/
-            .omMNy+-                :yNMMMMMMmo.
-               ./ymMMmhs+/:————:+shNMMMMMmy/.
-                   `-/oyhdmNMMMMNmdhyo/-`
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--->
 <html>
 <head>
 <meta charset="utf-8">
@@ -86,7 +22,7 @@ setSize();
 <div id="wrapper">
 <h1 id="chapter-i-the-pull-push-conundrum">Chapter I: The pull/push conundrum</h1>
 <ul>
-<li><a href="./00-intro.html">The Yin-Yang of Generators and Iterators</a></li>
+<li><a href="./00-intro.html">Generators and Iterators</a></li>
 <li><strong>Chapter I: The pull/push conundrum</strong></li>
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
@@ -97,14 +33,14 @@ setSize();
 <li><a href="./08-advanced-topics.html">Chapter VIII: Advanced topics</a></li>
 </ul>
 <h2 id="looping-collections">Looping collections</h2>
-<p>We&#39;ll kick things off by looping two kinds of data structures: trees and arrays. In an array, everything exists sequentially in a line, so looping is easy. A tree has a non-linear branching structure, so looping it isn&#39;t so straightforward. Also, terminology note: when you loop through a collection, we&#39;ll say that you&#39;re the <strong>consumer</strong>, while the collection is the <strong>producer</strong>.</p>
+<p>It all starts with looping. Let&#39;s consider two kinds of data structures you can loop through: trees and arrays. In an array, everything exists sequentially in a line, so looping is easy. A tree has a non-linear branching structure, so looping it isn&#39;t so straightforward. Also, terminology note: when you loop through a collection, we&#39;ll say that you&#39;re the <strong>consumer</strong>, while the collection is the <strong>producer</strong>.</p>
 <h2 id="pull-mode">Pull mode</h2>
-<p>As data flows from producer to consumer, &quot;pull mode&quot; just means that the consumer initiates the transfer at each step, while the producer more or less acts like an inert data structure that can be read from. It might sound complicated, but all it means is this:</p>
+<p>As data flows from producer to consumer, &quot;pull mode&quot; means that the consumer initiates the transfer, while the producer remains passive:</p>
 <pre><code class="lang-js">for (var i=0; i&lt;array.length; i++) {
   visit(array[i]);
 }
 </code></pre>
-<p>Looping the array was fairly easy. Looping a tree is slightly more complicated. Let&#39;s assume it&#39;s a <a href="https://en.wikipedia.org/wiki/Binary_search_tree">binary search tree</a>. A bit of googling turns up an algorithm we can use:</p>
+<p>Looping the array was fairly easy. Looping a tree is more complicated. Let&#39;s assume it&#39;s a <a href="https://en.wikipedia.org/wiki/Binary_search_tree">binary search tree</a>. A bit of googling turns up an algorithm we can use:</p>
 <pre><code class="lang-js">var queue = tree.root ? [tree.root] : [];
 while (queue.length &gt; 0) {
   var node = queue.shift();
@@ -113,9 +49,9 @@ while (queue.length &gt; 0) {
   if (node.right) { queue.push(node.right); }
 }
 </code></pre>
-<p>It would be annoying to have to type out this pile of code every time I want to loop a tree, but since I&#39;m initiating the transfer, the task falls to me.</p>
+<p>That&#39;s quite a pile of code to have to memorize and type out just to loop a collection, but since I&#39;m initiating the transfer, the task falls to me.</p>
 <h2 id="push-mode">Push mode</h2>
-<p>Which raises the question: why should I initiate the transfer? Why not let producer do it? Hence push mode, in which the collection has a <code>forEach()</code> method that accepts a callback, which it uses to <em>push</em> values to us.</p>
+<p>Which raises the question: why should I initiate the transfer? Why not let producer do it? Hence push mode, in which the collection has a <code>forEach()</code> method that accepts a callback, which it uses to <em>push</em> values to us, while we sit back and passively receive the values.</p>
 <pre><code class="lang-js">array.forEach(elmt =&gt; visit(elmt));
 tree.forEach(elmt =&gt; visit(elmt));
 </code></pre>
@@ -132,7 +68,7 @@ tree.forEach(elmt =&gt; visit(elmt));
 <p><strong><a href="./02-for-of.html">Next: Chapter II: The for/of loop →</a></strong></p>
 <hr>
 <ul>
-<li><a href="./00-intro.html">The Yin-Yang of Generators and Iterators</a></li>
+<li><a href="./00-intro.html">Generators and Iterators</a></li>
 <li><strong>Chapter I: The pull/push conundrum</strong></li>
 <li><a href="./02-for-of.html">Chapter II: The for/of loop</a></li>
 <li><a href="./03-iterators.html">Chapter III: Iterators</a></li>
@@ -145,7 +81,7 @@ tree.forEach(elmt =&gt; visit(elmt));
 
 <hr>
 <p id="bottom-note">
-Copyright &copy; 2016 by Greg Reimer (<a href="https://github.com/greim">github.com/greim</a>).
+Copyright &copy; 2016 by Greg Reimer (<a href="https://github.com/greim">github</a>, <a href="https://twitter.com/greim">twitter</a>).
 Submit issues to the <a href="https://github.com/greim/gen/issues">GitHub issues</a> page.
 </p>
 </div>
