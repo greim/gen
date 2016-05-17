@@ -13,7 +13,7 @@ Fundamentally, iterators are an abstract way to represent a sequence. Before ES6
  1. **Open-ended sequences**: Sometimes it's useful to model *infinite or ridiculously long sequences*. For example, the set of all positive integers.
  2. **Lazy sequences**: Sometimes it's useful to model lazy sequences, which don't have a value until the moment the consumer asks for it. This can save both memory and CPU cycles.
 
-Iterators have no problem with the above, because they define a protocol comprising the *minimum* operations for sequence traversal: A) what's the next thing? and B) are we done yet?
+Arrays come loaded with a lot of capabilities and assumptions, which makes them powerful but also means they can't do these things. Iterators have no such limitations, because they define a protocol comprising only the *minimum* operations for sequence traversal: A) what's the next thing? and B) are we done yet?
 
 By establishing a set of minimal rules everyone agrees to follow, the protocol establishes separation of concerns. As long as you—the producer—implement the protocol, you're free to model a sequence however you want. As long as you—the consumer—adhere to this protocol, you're free to decide when to iterate and whether to bail out of the iteration.
 

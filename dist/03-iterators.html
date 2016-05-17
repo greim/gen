@@ -40,7 +40,7 @@ setSize();
 <li><strong>Open-ended sequences</strong>: Sometimes it&#39;s useful to model <em>infinite or ridiculously long sequences</em>. For example, the set of all positive integers.</li>
 <li><strong>Lazy sequences</strong>: Sometimes it&#39;s useful to model lazy sequences, which don&#39;t have a value until the moment the consumer asks for it. This can save both memory and CPU cycles.</li>
 </ol>
-<p>Iterators have no problem with the above, because they define a protocol comprising the <em>minimum</em> operations for sequence traversal: A) what&#39;s the next thing? and B) are we done yet?</p>
+<p>Arrays come loaded with a lot of capabilities and assumptions, which makes them powerful but also means they can&#39;t do these things. Iterators have no such limitations, because they define a protocol comprising only the <em>minimum</em> operations for sequence traversal: A) what&#39;s the next thing? and B) are we done yet?</p>
 <p>By establishing a set of minimal rules everyone agrees to follow, the protocol establishes separation of concerns. As long as you—the producer—implement the protocol, you&#39;re free to model a sequence however you want. As long as you—the consumer—adhere to this protocol, you&#39;re free to decide when to iterate and whether to bail out of the iteration.</p>
 <p>Finally, because it&#39;s defined in the language, language-level hooks exist that make working with iterators ultra-simple. On the consumer side, this is the for/of loop. On the producer side, it&#39;s generators. But we&#39;re getting ahead of ourselves! First let&#39;s look at how these protocols work. There are actually two concepts in play—iterables and iterators—each with its own protocol.</p>
 <h2 id="concept-iterables">Concept: Iterables</h2>
